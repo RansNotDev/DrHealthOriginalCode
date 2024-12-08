@@ -183,7 +183,7 @@
                     age: age,
                     barangay: barangay,
                     municipality: municipality,
-                    city: city,
+                    city: city, 
                     gender: gender,
                     email: email,
                     password: password,
