@@ -3,33 +3,35 @@ session_start();
 $con = mysqli_connect("localhost", "root", "", "myhmsdb");
 
 if (isset($_POST['patsub1'])) {
-    // Use session data to insert user details into the database
-    $fname = $_SESSION['fname'];
-    $lname = $_SESSION['lname'];
-    $age = $_SESSION['age'];
-    $gender = $_SESSION['gender'];
-    $email = $_SESSION['email'];
-    $contact = $_SESSION['contact'];
-    $address = $_SESSION['address'];
-    $password = $_SESSION['password'];
+  // Use session data to insert user details into the database
+  $fname = $_SESSION['fname'];
+  $lname = $_SESSION['lname'];
+  $age = $_SESSION['age'];
+  $gender = $_SESSION['gender'];
+  $email = $_SESSION['email'];
+  $contact = $_SESSION['contact'];
 
-    // Insert the data into the `patreg` table
-    $query = "INSERT INTO patreg (fname, lname, age, gender, email, contact, address, password) 
-              VALUES ('$fname','$lname','$age','$gender','$email','$contact','$address','$password')";
-    $result = mysqli_query($con, $query);
+  // Combine City, Municipality, and Barangay into one address
+  $city = $_SESSION['city'];
+  $municipality = $_SESSION['municipality'];
+  $barangay = $_SESSION['barangay'];
+  $address = $barangay . ", " . $municipality . ", " . $city;
 
-    if ($result) {
-        $_SESSION['username'] = $fname . " " . $lname;
-        $_SESSION['pid'] = mysqli_insert_id($con); // Get last inserted ID
-        echo json_encode(['success' => true]);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Error inserting data']);
-    }
+  $password = $_SESSION['password'];
+
+  $query = "INSERT INTO patreg (fname, lname, age, gender, email, contact, address, password) 
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  $stmt = $con->prepare($query);
+  $stmt->bind_param("ssssssss", $fname, $lname, $age, $gender, $email, $contact, $address, $password);
+
+  if ($stmt->execute()) {
+    $_SESSION['username'] = $fname . " " . $lname;
+    $_SESSION['pid'] = $stmt->insert_id; // Use the insert_id method
+    echo json_encode(['success' => true]);
+  } else {
+    echo json_encode(['success' => false, 'message' => 'Error inserting data']);
+  }
 }
-
-
-
-
 
 // function display_docs()
 // {
@@ -44,16 +46,16 @@ if (isset($_POST['patsub1'])) {
 // 	}
 // }
 
-if(isset($_POST['doc_sub']))
-{
-	$name=$_POST['name'];
-	$query="insert into doctb(name)values('$name')";
-	$result=mysqli_query($con,$query);
-	if($result)
-		header("Location:adddoc.php");
+if (isset($_POST['doc_sub'])) {
+  $name = $_POST['name'];
+  $query = "insert into doctb(name)values('$name')";
+  $result = mysqli_query($con, $query);
+  if ($result)
+    header("Location:adddoc.php");
 }
-function display_admin_panel(){
-	echo '<!DOCTYPE html>
+function display_admin_panel()
+{
+  echo '<!DOCTYPE html>
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -209,4 +211,3 @@ function display_admin_panel(){
   </body>
 </html>';
 }
-?>
