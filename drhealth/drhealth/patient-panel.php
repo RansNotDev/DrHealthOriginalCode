@@ -440,6 +440,13 @@ function get_specs()
                 display: none;
             }
         }
+
+        /* Hide sidebar on mobile view */
+        @media (max-width: 767px) {
+            .sidebar {
+                display: none;
+            }
+        }
     </style>
 
     <script>

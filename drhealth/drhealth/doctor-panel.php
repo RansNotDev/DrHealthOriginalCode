@@ -296,6 +296,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
   }
 }
 
+// Get the logged-in doctor's name
+$dname = $_SESSION['dname'];
+// Initialize query
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search_submit'])) {
+  $pid = isset($_POST['pid']) ? $_POST['pid'] : '';
+  $status_filter = isset($_POST['status_filter']) ? $_POST['status_filter'] : '';
+
+  // Base query with doctor filter
+  $query = "SELECT * FROM appointmenttb WHERE doctor = '$dname'";
+
+  // Add filters
+  if (!empty($pid)) {
+    $query .= " AND pid LIKE '%$pid%'";
+  }
+
+  if (!empty($status_filter)) {
+    if ($status_filter === 'Pending') {
+      $query .= " AND userStatus = 1 AND doctorStatus = 1";
+    } elseif ($status_filter === 'Confirmed') {
+      $query .= " AND userStatus = 2 AND doctorStatus = 2";
+    } elseif ($status_filter === 'Cancelled') {
+      $query .= " AND ((userStatus = 0 AND doctorStatus = 1) OR (userStatus = 1 AND doctorStatus = 0))";
+    }
+  }
+
+  // Execute query
+  $appointments_results = mysqli_query($con, $query);
+} else {
+  // Default query for logged-in doctor's appointments
+  $appointments_results = mysqli_query($con, "SELECT * FROM appointmenttb WHERE doctor = '$dname'");
+}
 
 ?>
 
@@ -539,8 +570,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
 <body class="bg-light-bg">
   <div class="flex h-screen space-x-6 p-4">
     <!-- Sidebar -->
-    <div class="sidebar w-64 p-6 space-y-6">
-
+    <div class="sidebar w-64 p-6 space-y-6 hidden sm:block md:block">
       <div class="text-center text-2xl font-bold">D.R. Health Medical and Diagnostic Center</div>
       <nav>
         <button onclick="showDiv('dashboard')" class="block py-2 px-4 rounded hover:bg-pastel-green">
@@ -562,8 +592,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
           <i class="fa fa-clock"></i> Profile
         </button>
       </nav>
-
     </div>
+
     <!-- Main content -->
 
     <div class="flex-1 overflow-y-auto">
@@ -598,12 +628,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
       </div>
 
       <div id="appointments" class="<?php echo $active_div == 'appointments' ? '' : 'hidden'; ?> mt-8">
-
         <form class="flex mb-4" method="post" action="">
           <input type="hidden" name="active_div" value="appointments">
-          <input class="form-input mr-2 p-2 border rounded" type="text" placeholder="Enter the Patient ID" name="pid">
-          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded" name="search_submit" style="background-color: #0D409E" ;>Search</button>
+
+          <!-- Patient ID Search -->
+          <input class="form-input mr-2 p-2 border rounded" type="text" placeholder="Enter the Patient ID" name="pid" value="<?php echo isset($_POST['pid']) ? $_POST['pid'] : ''; ?>">
+
+          <!-- Appointment Status Filter -->
+          <select name="status_filter" class="form-input mr-2 p-2 border rounded">
+            <option value="">All Statuses</option>
+            <option value="Pending" <?php echo isset($_POST['status_filter']) && $_POST['status_filter'] == 'Pending' ? 'selected' : ''; ?>>Pending</option>
+            <option value="Confirmed" <?php echo isset($_POST['status_filter']) && $_POST['status_filter'] == 'Confirmed' ? 'selected' : ''; ?>>Confirmed</option>
+            <option value="Cancelled" <?php echo isset($_POST['status_filter']) && $_POST['status_filter'] == 'Cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+          </select>
+
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded" name="search_submit" style="background-color: #0D409E;">Search</button>
         </form>
+
+        <!-- Table -->
         <table class="table-auto w-full">
           <thead>
             <tr>

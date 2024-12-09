@@ -133,6 +133,51 @@
             font-weight: 600;
             color: #0D409E;
         }
+
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .form-container {
+                margin-top: 15%;
+                /* Adds top margin so it's not behind the navbar */
+                padding: 20px;
+                /* Adds padding for better spacing */
+                max-width: 90%;
+                /* Makes the container wider on small screens */
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .form-heading {
+                font-size: 1.5rem;
+                /* Slightly smaller font size */
+            }
+
+            .btn-primary {
+                padding: 15px;
+                /* Adds more padding to buttons for a larger look */
+                font-size: 1.1rem;
+                /* Slightly larger font size for better readability */
+            }
+
+            .error-message {
+                font-size: 0.9rem;
+                /* Smaller error message text */
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                width: 100%;
+                /* Ensure form elements take up full width on mobile */
+            }
+        }
+
+
+        @media (max-width: 576px) {
+            .footer {
+                padding: 10px;
+            }
+        }
     </style>
     <script>
         function toggleForm(formType) {
@@ -273,22 +318,23 @@
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
         <div class="container">
             <a class="navbar-brand js-scroll-trigger" href="home.html">
-                <img src="images/logo.png" alt="Logo">
-                <h4 class="d-inline align-middle">D.R. HEALTH MEDICAL AND DIAGNOSTIC CENTER</h4>
+                <img src="images/logo.png" alt="Logo" style="max-height: 50px;"> <!-- Resize logo -->
+                <h4 class="d-inline align-middle ml-2" style="white-space: normal;">D.R. HEALTH MEDICAL AND DIAGNOSTIC CENTER</h4> <!-- Allow wrapping -->
             </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <!-- Move the navbar-toggler to the right side -->
+            <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav ml-auto">
                     <li class="nav-item">
                         <a class="nav-link js-scroll-trigger" href="home.html">
-                            <i class="fa fa-home"></i>Home
+                            <i class="fa fa-home"></i> Home
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link js-scroll-trigger" href="about.html">
-                            <i class="fa fa-info-circle"></i>About Us
+                            <i class="fa fa-info-circle"></i> About Us
                         </a>
                     </li>
                     <li class="nav-item">
@@ -298,7 +344,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link js-scroll-trigger" href="index.php">
-                            <i class="fa fa-sign-in-alt"></i>Login
+                            <i class="fa fa-sign-in-alt"></i> Login
                         </a>
                     </li>
                 </ul>
@@ -306,7 +352,8 @@
         </div>
     </nav>
 
-    <div class="container form-container">
+
+    <div class="container form-container" style="margin-top: 180px;">
         <ul class="nav nav-tabs" id="formTabs" role="tablist">
             <li class="nav-item">
                 <a class="nav-link active" id="login-tab" data-toggle="tab" href="#login" role="tab" aria-controls="login" aria-selected="true">Login</a>
@@ -318,180 +365,77 @@
         <div class="tab-content" id="formTabsContent">
             <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
                 <div class="login-content">
-                    <h3 class="form-heading">Login</h3>
+                    <h3 class="form-heading text-center">Login</h3>
                     <form method="POST" action="func.php">
                         <div class="form-group">
                             <label for="email"><i class="fa fa-envelope"></i> Email</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"></span>
-                                </div>
-                                <input type="text" id="email" name="email" class="form-control" placeholder="Enter email ID" required />
-                            </div>
+                            <input type="text" id="email" name="email" class="form-control" placeholder="Enter email ID" required />
                         </div>
                         <div class="form-group">
                             <label for="password2"><i class="fa fa-lock"></i> Password</label>
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text"></span>
-                                </div>
-                                <input type="password" id="password2" name="password2" class="form-control" placeholder="Enter password" required />
-                            </div>
+                            <input type="password" id="password2" name="password2" class="form-control" placeholder="Enter password" required />
                         </div>
-
-
-                        <a href="forgot_password.php" class="forgot-link">Forgot Password?</a>
+                        <a href="forgot_password.php" class="forgot-link d-block text-right">Forgot Password?</a>
                         <div class="form-group">
                             <input type="submit" id="inputbtn" name="patsub" value="LOGIN" class="btn btn-primary btn-block" />
                         </div>
                     </form>
                 </div>
             </div>
+
+            <!-- Register Tab Content -->
             <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
                 <div class="register-content">
-                    <h3 class="form-heading">Register</h3>
-                    <form id="registration-form" method="POST" action="func2.php" onsubmit="return checkPasswordLength();">
+                    <h3 class="form-heading text-center">Register</h3>
+                    <form id="registration-form" method="POST" action="func2.php">
                         <div class="form-group">
                             <label for="fname"><i class="fa fa-user"></i> First Name</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="First Name"
-                                id="fname"
-                                name="fname"
-                                oninput="restrictSpecialChars(this)"
-                                required />
+                            <input type="text" class="form-control" placeholder="First Name" id="fname" name="fname" required />
                         </div>
                         <div class="form-group">
                             <label for="lname"><i class="fa fa-user"></i> Last Name</label>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Last Name"
-                                id="lname"
-                                name="lname"
-                                oninput="restrictSpecialChars(this)"
-                                required />
+                            <input type="text" class="form-control" placeholder="Last Name" id="lname" name="lname" required />
                         </div>
                         <div class="form-group">
                             <label for="age"><i class="fa fa-calendar-alt"></i> Age</label>
-                            <input
-                                type="number"
-                                class="form-control"
-                                placeholder="Age"
-                                id="age"
-                                name="age"
-                                min="1"
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                required />
+                            <input type="number" class="form-control" placeholder="Age" id="age" name="age" min="1" required />
                         </div>
 
                         <!-- Address Fields in One Row -->
                         <div class="form-row">
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-12 col-md-4">
                                 <label for="city"><i class="fa fa-map-marker-alt"></i> City</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="City"
-                                    id="city"
-                                    name="city"
-                                    oninput="restrictSpecialChars(this)"
-                                    required />
+                                <input type="text" class="form-control" placeholder="City" id="city" name="city" required />
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-12 col-md-4">
                                 <label for="municipality"><i class="fa fa-map-marker-alt"></i> Municipality</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="Municipality"
-                                    id="municipality"
-                                    name="municipality"
-                                    oninput="restrictSpecialChars(this)"
-                                    required />
+                                <input type="text" class="form-control" placeholder="Municipality" id="municipality" name="municipality" required />
                             </div>
-                            <div class="form-group col-md-4">
+                            <div class="form-group col-12 col-md-4">
                                 <label for="barangay"><i class="fa fa-map-marker-alt"></i> Barangay</label>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="Barangay"
-                                    id="barangay"
-                                    name="barangay"
-                                    oninput="restrictSpecialChars(this)"
-                                    required />
+                                <input type="text" class="form-control" placeholder="Barangay" id="barangay" name="barangay" required />
                             </div>
                         </div>
 
-                        <!-- Password Field with validation -->
+                        <!-- Password Field -->
                         <div class="form-group">
                             <label for="password"><i class="fa fa-lock"></i> Password</label>
-                            <div class="input-group">
-                                <input
-                                    type="password"
-                                    class="form-control"
-                                    placeholder="Password"
-                                    id="password"
-                                    name="password"
-                                    onkeyup="checkPasswordMatch();"
-                                    required />
-                                <div class="input-group-append">
-                                    <button
-                                        class="btn btn-outline-secondary"
-                                        type="button"
-                                        onclick="togglePasswordVisibility('password', 'toggleIcon')">
-                                        <i id="toggleIcon" class="fa fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
+                            <input type="password" class="form-control" placeholder="Password" id="password" name="password" required />
                         </div>
 
                         <!-- Confirm Password -->
                         <div class="form-group">
                             <label for="cpassword"><i class="fa fa-lock"></i> Confirm Password</label>
-                            <div class="input-group">
-                                <input
-                                    type="password"
-                                    class="form-control"
-                                    placeholder="Confirm Password"
-                                    id="cpassword"
-                                    name="cpassword"
-                                    onkeyup="checkPasswordMatch();"
-                                    required />
-                                <div class="input-group-append">
-                                    <button
-                                        class="btn btn-outline-secondary"
-                                        type="button"
-                                        onclick="togglePasswordVisibility('cpassword', 'toggleIconConfirm')">
-                                        <i id="toggleIconConfirm" class="fa fa-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div id="message" class="form-text mt-1"></div>
+                            <input type="password" class="form-control" placeholder="Confirm Password" id="cpassword" name="cpassword" required />
                         </div>
 
                         <div class="form-group">
                             <label for="contact"><i class="fa fa-phone"></i> Contact No.</label>
-                            <input
-                                type="tel"
-                                minlength="11"
-                                maxlength="11"
-                                id="contact"
-                                name="contact"
-                                class="form-control"
-                                placeholder="Contact No."
-                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                required />
+                            <input type="tel" minlength="11" maxlength="11" id="contact" name="contact" class="form-control" placeholder="Contact No." required />
                         </div>
                         <div class="form-group">
                             <label for="register-email"><i class="fa fa-envelope"></i> Email</label>
-                            <input
-                                type="email"
-                                class="form-control"
-                                placeholder="Email"
-                                id="register-email"
-                                name="email"
-                                required />
+                            <input type="email" class="form-control" placeholder="Email" id="register-email" name="email" required />
                         </div>
                         <div class="form-group">
                             <label><i class="fa fa-venus-mars"></i> Gender</label>
@@ -511,10 +455,11 @@
                         </div>
                     </form>
                 </div>
-
             </div>
         </div>
     </div>
+
+
     </div>
 
     <!-- OTP Modal -->
