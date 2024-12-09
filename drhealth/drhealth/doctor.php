@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +31,7 @@
             background-color: rgba(255, 255, 255, 0.9);
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
             background-image: url('images/bck1.png');
@@ -73,7 +74,8 @@
         .password-toggle .toggle-password {
             position: absolute;
             top: 70%;
-            right: 15px; /* Adjusted the right property to align it properly */
+            right: 15px;
+            /* Adjusted the right property to align it properly */
             transform: translateY(-50%);
             cursor: pointer;
             z-index: 2;
@@ -106,11 +108,38 @@
         .footer a:hover {
             text-decoration: underline;
         }
-        .form-group i {
-    margin-right: 8px;
-    color: #0062cc; /* Match your theme color */
-}
 
+        .form-group i {
+            margin-right: 8px;
+            color: #0062cc;
+            /* Match your theme color */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 767px) {
+            .login-container {
+                margin-top: 15%;
+                padding: 20px;
+                max-width: 90%;
+                /* Make the container wider on small screens */
+            }
+
+            .register-heading {
+                font-size: 1.5rem;
+                /* Slightly smaller font size */
+            }
+
+            .btnRegister {
+                padding: 15px;
+                font-size: 1.1rem;
+                /* Larger button on small screens */
+            }
+
+            .error-message {
+                font-size: 0.9rem;
+                /* Smaller error message text */
+            }
+        }
     </style>
 </head>
 
@@ -124,14 +153,14 @@
             <form method="post" action="func1.php">
                 <div class="form-group">
                     <label for="email3"><i class="fa fa-envelope"></i> Email</label>
-                   <input type="email" id="email3" class="form-control" placeholder="Email" name="email3" required />
+                    <input type="email" id="email3" class="form-control" placeholder="Email" name="email3" required />
                 </div>
                 <div class="form-group password-toggle">
-                     <label for="password3"><i class="fa fa-lock"></i> Password</label>
-        <input type="password" id="password3" class="form-control" placeholder="Password" name="password3" required />
-        <span class="toggle-password" onclick="togglePasswordVisibility()">
-            <i class="fa fa-eye" aria-hidden="true"></i>
-        </span>
+                    <label for="password3"><i class="fa fa-lock"></i> Password</label>
+                    <input type="password" id="password3" class="form-control" placeholder="Password" name="password3" required />
+                    <span class="toggle-password" onclick="togglePasswordVisibility()">
+                        <i class="fa fa-eye" aria-hidden="true"></i>
+                    </span>
                 </div>
                 <input type="submit" class="btnRegister" name="docsub1" value="Login">
             </form>
@@ -158,4 +187,5 @@
         }
     </script>
 </body>
+
 </html>
