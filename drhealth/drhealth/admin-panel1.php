@@ -464,11 +464,23 @@
 
             <!-- Contact Number -->
             <div class="mb-4">
-              <label for="dcontact" class="block text-gray-700">Contact Number:</label>
-              <input type="tel" name="dcontact" class="form-input mt-1 block w-full" pattern="[0-9]{10,11}"
-                maxlength="11" placeholder="10-11 digit number" required
-                title="Only numeric values are allowed, 10-11 digits">
-            </div>
+    <label for="dcontact" class="block text-gray-700">Contact Number:</label>
+    <div class="flex items-center">
+        <span class="text-gray-700 mr-2">(+639)</span>
+        <input 
+            type="tel" 
+            name="dcontact" 
+            id="dcontact"
+            class="form-input mt-1 block w-full" 
+            pattern="[0-9]{9}" 
+            maxlength="9" 
+            placeholder="Enter 9 digits" 
+            required 
+            title="Only numeric values are allowed, 9 digits after the country code."
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+        >
+    </div>
+</div>
 
             <!-- Gender -->
             <div class="mb-4">
@@ -764,6 +776,28 @@
       <section id="list-app" class="section hidden mt-8">
         <h4 class="text-xl font-semibold mb-4">Appointment Details</h4>
 
+        <!-- Search and Filter -->
+        <div class="flex items-center justify-between mb-4">
+          <!-- Search Input -->
+          <form method="GET" class="flex space-x-4">
+            <input type="text" name="search" placeholder="Search by Patient Name, Email, or Contact"
+              class="form-input px-4 py-2 border rounded-md"
+              value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" />
+
+            <!-- Status Filter -->
+            <select name="status_filter" class="form-select px-4 py-2 border rounded-md">
+              <option value="">All Statuses</option>
+              <option value="Pending" <?php echo (isset($_GET['status_filter']) && $_GET['status_filter'] == 'Pending') ? 'selected' : ''; ?>>Pending</option>
+              <option value="Cancelled by Patient" <?php echo (isset($_GET['status_filter']) && $_GET['status_filter'] == 'Cancelled by Patient') ? 'selected' : ''; ?>>Cancelled by Patient</option>
+              <option value="Cancelled by Doctor" <?php echo (isset($_GET['status_filter']) && $_GET['status_filter'] == 'Cancelled by Doctor') ? 'selected' : ''; ?>>Cancelled by Doctor</option>
+              <option value="Confirmed" <?php echo (isset($_GET['status_filter']) && $_GET['status_filter'] == 'Confirmed') ? 'selected' : ''; ?>>Confirmed</option>
+            </select>
+
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Search</button>
+          </form>
+        </div>
+
+        <!-- Appointment Table -->
         <div class="overflow-x-auto">
           <table class="table-auto w-full min-w-max">
             <thead>
@@ -781,11 +815,42 @@
             </thead>
             <tbody>
               <?php
+              // Capture search and filter inputs
+              $search = isset($_GET['search']) ? mysqli_real_escape_string($con, $_GET['search']) : '';
+              $statusFilter = isset($_GET['status_filter']) ? mysqli_real_escape_string($con, $_GET['status_filter']) : '';
+
+              // Base query
               $query = "SELECT p.pid, p.fname, p.lname, p.age, p.gender, p.email, p.contact, p.address, a.userStatus, a.doctorStatus 
-                  FROM patreg p 
-                  LEFT JOIN appointmenttb a ON p.pid = a.pid";
+                          FROM patreg p 
+                          LEFT JOIN appointmenttb a ON p.pid = a.pid";
+
+              // Add search and filter conditions
+              $conditions = [];
+              if (!empty($search)) {
+                $conditions[] = "(p.fname LIKE '%$search%' OR p.lname LIKE '%$search%' OR p.email LIKE '%$search%' OR p.contact LIKE '%$search%')";
+              }
+
+              if (!empty($statusFilter)) {
+                if ($statusFilter == "Pending") {
+                  $conditions[] = "(a.userStatus = 1 AND a.doctorStatus = 1)";
+                } elseif ($statusFilter == "Cancelled by Patient") {
+                  $conditions[] = "(a.userStatus = 0 AND a.doctorStatus = 1)";
+                } elseif ($statusFilter == "Cancelled by Doctor") {
+                  $conditions[] = "(a.userStatus = 1 AND a.doctorStatus = 0)";
+                } elseif ($statusFilter == "Confirmed") {
+                  $conditions[] = "(a.userStatus = 2 AND a.doctorStatus = 2)";
+                }
+              }
+
+              // Append conditions to query
+              if (count($conditions) > 0) {
+                $query .= " WHERE " . implode(" AND ", $conditions);
+              }
+
+              // Execute query
               $result = mysqli_query($con, $query);
 
+              // Render rows
               while ($row = mysqli_fetch_assoc($result)) {
                 $pid = isset($row['pid']) ? $row['pid'] : '';
                 $fname = isset($row['fname']) ? $row['fname'] : '';
@@ -810,22 +875,23 @@
                 }
 
                 echo "<tr class='border-b'>
-                <td class='border px-4 py-2'>$pid</td>
-                <td class='border px-4 py-2'>$fname</td>
-                <td class='border px-4 py-2'>$lname</td>
-                <td class='border px-4 py-2'>$age</td>
-                <td class='border px-4 py-2'>$gender</td>
-                <td class='border px-4 py-2'>$email</td>
-                <td class='border px-4 py-2'>$contact</td>
-                <td class='border px-4 py-2'>$address</td>
-                <td class='border px-4 py-2'>$status</td>
-              </tr>";
+                        <td class='border px-4 py-2'>$pid</td>
+                        <td class='border px-4 py-2'>$fname</td>
+                        <td class='border px-4 py-2'>$lname</td>
+                        <td class='border px-4 py-2'>$age</td>
+                        <td class='border px-4 py-2'>$gender</td>
+                        <td class='border px-4 py-2'>$email</td>
+                        <td class='border px-4 py-2'>$contact</td>
+                        <td class='border px-4 py-2'>$address</td>
+                        <td class='border px-4 py-2'>$status</td>
+                    </tr>";
               }
               ?>
             </tbody>
           </table>
         </div>
       </section>
+
 
 
       <!-- Monthly Reports -->

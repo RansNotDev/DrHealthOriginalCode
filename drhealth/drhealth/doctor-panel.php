@@ -962,49 +962,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search_submit'])) {
             callback(data);
           });
       }
-
       function renderCalendar(date, availability) {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        const firstDayOfMonth = new Date(year, month, 1).getDay();
-        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const firstDayOfMonth = new Date(year, month, 1).getDay();
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-        calendarEl.innerHTML = '';
-        currentMonthEl.textContent = `${monthNames[month]} ${year}`;
+    const today = new Date(); // Current date
+    const currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // Normalize current date
 
-        dayNames.forEach(day => {
-          const dayEl = document.createElement('div');
-          dayEl.className = 'font-bold text-center';
-          dayEl.textContent = day;
-          calendarEl.appendChild(dayEl);
-        });
+    calendarEl.innerHTML = '';
+    currentMonthEl.textContent = `${monthNames[month]} ${year}`;
 
-        for (let i = 0; i < firstDayOfMonth; i++) {
-          const emptyCell = document.createElement('div');
-          emptyCell.className = 'bg-gray-200';
-          calendarEl.appendChild(emptyCell);
-        }
+    dayNames.forEach(day => {
+        const dayEl = document.createElement('div');
+        dayEl.className = 'font-bold text-center';
+        dayEl.textContent = day;
+        calendarEl.appendChild(dayEl);
+    });
 
-        for (let day = 1; day <= daysInMonth; day++) {
-          const dateValue = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-          const dayEl = document.createElement('div');
-          dayEl.className = 'bg-white p-2 rounded shadow text-center'; // Adjusted padding
-          const label = document.createElement('label');
-          const checkbox = document.createElement('input');
-          checkbox.type = 'checkbox';
-          checkbox.name = 'available_dates[]';
-          checkbox.value = dateValue;
-          if (availability.includes(dateValue)) {
+    for (let i = 0; i < firstDayOfMonth; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'bg-gray-200';
+        calendarEl.appendChild(emptyCell);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dateValue = new Date(year, month, day); // Construct the date object for the current day
+        const formattedDateValue = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayEl = document.createElement('div');
+        dayEl.className = 'bg-white p-2 rounded shadow text-center'; // Adjusted padding
+        
+        const label = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.name = 'available_dates[]';
+        checkbox.value = formattedDateValue;
+
+        if (availability.includes(formattedDateValue)) {
             checkbox.checked = true;
-          }
-          label.appendChild(checkbox);
-          label.appendChild(document.createTextNode(` ${day}`));
-          dayEl.appendChild(label);
-          calendarEl.appendChild(dayEl);
         }
-      }
+
+        // Disable checkbox for past dates
+        if (dateValue < currentDate) {
+            checkbox.disabled = true;
+            dayEl.classList.add('opacity-50'); // Optional: Style past dates differently
+        }
+
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(` ${day}`));
+        dayEl.appendChild(label);
+        calendarEl.appendChild(dayEl);
+    }
+}
+
 
       prevMonthBtn.addEventListener('click', () => {
         currentDate.setMonth(currentDate.getMonth() - 1);
