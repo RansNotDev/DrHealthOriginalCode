@@ -130,15 +130,15 @@ function get_specs()
             document.getElementById('messageModal').classList.remove('hidden');
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const closeMessageModal = document.getElementById('closeMessageModal');
             const closeModalButton = document.getElementById('closeModalButton');
 
-            closeMessageModal.addEventListener('click', function() {
+            closeMessageModal.addEventListener('click', function () {
                 document.getElementById('messageModal').classList.add('hidden');
             });
 
-            closeModalButton.addEventListener('click', function() {
+            closeModalButton.addEventListener('click', function () {
                 document.getElementById('messageModal').classList.add('hidden');
             });
         });
@@ -534,9 +534,9 @@ function get_specs()
             return `${hour}:${minutes} ${period}`;
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Event listener for selecting a doctor
-            document.getElementById('select-doctor-btn').addEventListener('click', function() {
+            document.getElementById('select-doctor-btn').addEventListener('click', function () {
                 const selectedDoctor = document.getElementById('doctor').value;
                 const selectedDate = document.getElementById('appdate').value;
                 if (selectedDoctor) {
@@ -610,13 +610,13 @@ function get_specs()
             // ... (rest of the code)
 
             // Set the min attribute for the appointment date to disable past dates
-            document.addEventListener("DOMContentLoaded", function() {
+            document.addEventListener("DOMContentLoaded", function () {
                 const dateInput = document.getElementById("appdate");
                 const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
                 dateInput.setAttribute("min", today); // Set the min attribute to today's date
             });
 
-            document.getElementById('appdate').addEventListener('change', function() {
+            document.getElementById('appdate').addEventListener('change', function () {
                 const selectedDoctor = document.getElementById('doctor').value;
                 const selectedDate = this.value;
 
@@ -696,11 +696,11 @@ function get_specs()
                 });
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Close the modal when the close button is clicked
             const closeModalButton = document.getElementById('closeModal');
             if (closeModalButton) {
-                closeModalButton.addEventListener('click', function() {
+                closeModalButton.addEventListener('click', function () {
                     document.getElementById('queueModal').classList.add('hidden');
                 });
             }
@@ -708,7 +708,7 @@ function get_specs()
             // Close the modal when the bottom close button is clicked
             const closeModalBottomButton = document.getElementById('closeModalBottom');
             if (closeModalBottomButton) {
-                closeModalBottomButton.addEventListener('click', function() {
+                closeModalBottomButton.addEventListener('click', function () {
                     document.getElementById('queueModal').classList.add('hidden');
                 });
             }
@@ -716,13 +716,13 @@ function get_specs()
             // Print the modal content when the print button is clicked
             const printButton = document.getElementById('printButton');
             if (printButton) {
-                printButton.addEventListener('click', function() {
+                printButton.addEventListener('click', function () {
                     window.print();
                 });
             }
 
             // Optional: Close the modal if the user clicks outside of it
-            window.addEventListener('click', function(event) {
+            window.addEventListener('click', function (event) {
                 const modal = document.getElementById('queueModal');
                 if (event.target === modal) {
                     modal.classList.add('hidden');
@@ -760,7 +760,7 @@ function get_specs()
 
 
         <!-- Main Content -->
-        <main class="flex-1 p-6">
+        <main class="flex-1 overflow-y-auto p-6">
             <h3 class="text-2xl font-bold mb-4">Welcome, <?php echo htmlspecialchars($username); ?>!</h3>
 
             <!-- Dashboard -->
@@ -775,12 +775,14 @@ function get_specs()
                     <div class="card text-center">
                         <span class="text-3xl text-blue-500"><i class="fa fa-history"></i></span>
                         <h5 class="mt-4">My Appointments</h5>
-                        <p><button onclick="showDiv('appointment-history')" class="btn-blue">View Appointment History</button></p>
+                        <p><button onclick="showDiv('appointment-history')" class="btn-blue">View Appointment
+                                History</button></p>
                     </div>
                     <div class="card text-center">
                         <span class="text-3xl text-blue-500"><i class="fa fa-file-text"></i></span>
                         <h5 class="mt-4">Prescriptions</h5>
-                        <p><button onclick="showDiv('prescriptions')" class="btn-blue">View Prescription List</button></p>
+                        <p><button onclick="showDiv('prescriptions')" class="btn-blue">View Prescription List</button>
+                        </p>
                     </div>
                 </div>
             </section>
@@ -804,7 +806,8 @@ function get_specs()
                                 ?>
                             </select>
                         </div>
-                        <button type="button" id="select-doctor-btn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Select Doctor</button>
+                        <button type="button" id="select-doctor-btn"
+                            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Select Doctor</button>
                         <div id="availability-container" class="mt-6">
                             <h4 class="text-xl font-semibold mb-4">Doctor's Availability</h4>
                             <ul id="availability-list" class="list-disc pl-5"></ul>
@@ -812,7 +815,8 @@ function get_specs()
                         </div>
                         <div class="mb-4 mt-6">
                             <label for="appdate" class="block text-gray-700">Appointment Date:</label>
-                            <input type="date" id="appdate" name="appdate" class="form-input block w-full mt-1" required disabled>
+                            <input type="date" id="appdate" name="appdate" class="form-input block w-full mt-1" required
+                                disabled>
                         </div>
                         <div class="mb-4">
                             <label for="apptime" class="block text-gray-700">Appointment Time:</label>
@@ -821,59 +825,87 @@ function get_specs()
                             </select>
                         </div>
 
-                        <button type="submit" name="app-submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Book Appointment</button>
+                        <button type="submit" name="app-submit"
+                            class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Book Appointment</button>
                     </form>
                 </div>
             </section>
 
             <!-- Appointment History -->
-            <section id="appointment-history" class="mb-8 section hidden">
+            <section id="appointment-history" class="section hidden mt-8">
                 <h4 class="text-xl font-semibold mb-4">Appointment History</h4>
-                <div class="bg-white p-6 rounded shadow-md">
-                    <table class="min-w-full divide-y divide-gray-200">
+
+                <!-- Search Bar -->
+                <div class="flex mb-4">
+                    <form method="GET" class="flex space-x-4">
+                        <!-- Search Input -->
+                        <div class="flex items-center">
+                            <input type="text" name="search" placeholder="Search Doctor, Appointment Date, or Status"
+                                class="form-input px-4 py-2 border rounded-md w-full md:w-auto"
+                                value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" />
+                        </div>
+
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Search</button>
+                    </form>
+                </div>
+
+                <!-- Responsive Table Container -->
+                <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+                    <table class="table-auto w-full min-w-max divide-y divide-gray-200">
                         <thead class="bg-gray-100">
                             <tr>
-                                <th class="py-2 px-4 text-left text-gray-700">Doctor</th>
-                                <th class="py-2 px-4 text-left text-gray-700">Appointment Date</th>
-                                <th class="py-2 px-4 text-left text-gray-700">Appointment Time</th>
-                                <th class="py-2 px-4 text-left text-gray-700">Status</th>
-                                <th class="py-2 px-4 text-left text-gray-700">Action</th>
+                                <th class="px-4 py-2 text-left text-gray-700">Doctor</th>
+                                <th class="px-4 py-2 text-left text-gray-700">Appointment Date</th>
+                                <th class="px-4 py-2 text-left text-gray-700">Appointment Time</th>
+                                <th class="px-4 py-2 text-left text-gray-700">Status</th>
+                                <th class="px-4 py-2 text-left text-gray-700">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-gray-200">
                             <?php
-                            $query = mysqli_query($con, "SELECT * FROM appointmenttb WHERE pid='$pid' ORDER BY appdate DESC, apptime DESC");
-                            while ($row = mysqli_fetch_assoc($query)) {
+                            // Capture the search term
+                            $search = isset($_GET['search']) ? mysqli_real_escape_string($con, $_GET['search']) : '';
+
+                            // Query to fetch appointment history with search functionality
+                            $query = "SELECT * FROM appointmenttb WHERE pid='$pid'";
+
+                            // Add search conditions
+                            if ($search) {
+                                $query .= " AND (doctor LIKE '%$search%' OR appdate LIKE '%$search%' OR apptime LIKE '%$search%')";
+                            }
+
+                            $query .= " ORDER BY appdate DESC, apptime DESC";
+
+                            // Execute the query
+                            $result = mysqli_query($con, $query);
+
+                            // Loop through and display the results
+                            while ($row = mysqli_fetch_assoc($result)) {
                                 $status = '';
                                 $actionButton = '';
 
-                                // Check if the appointment is cancelled by either the user or the doctor
+                                // Determine status and action button
                                 if ($row['userStatus'] == '0' || $row['doctorStatus'] == '0') {
                                     $status = 'Cancelled';
-                                    $actionButton = "Cancelled"; // No clickable action for cancelled appointments
+                                    $actionButton = 'Cancelled';
                                 } elseif ($row['userStatus'] == '1' && $row['doctorStatus'] == '1') {
                                     $status = 'Pending';
                                     $actionButton = "<a href='?cancel=1&ID=" . $row['ID'] . "' class='text-red-500 hover:underline'>Cancel</a>";
                                 } elseif ($row['userStatus'] == '2' && $row['doctorStatus'] == '2') {
-                                    // Check if a prescription exists for this appointment
+                                    // Check for a prescription
                                     $prescriptionQuery = mysqli_query($con, "SELECT * FROM prestb WHERE pid='$pid' AND appdate='" . $row['appdate'] . "' AND apptime='" . $row['apptime'] . "'");
-                                    if (mysqli_num_rows($prescriptionQuery) > 0) {
-                                        $status = '<i class="fas fa-check-circle text-green-500"></i>'; // Only the icon, no text
-                                    } else {
-                                        $status = 'Confirmed';
-                                    }
-                                    // Generate the Show Queue button with an event listener to trigger the modal
+                                    $status = (mysqli_num_rows($prescriptionQuery) > 0) ? '<i class="fas fa-check-circle text-green-500"></i>' : 'Confirmed';
                                     $referenceNumber = $row['reference_number']; // Assuming this column exists
                                     $actionButton = "<button onclick=\"showQueue('$referenceNumber')\" class='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'>View Queue</button>";
                                 }
 
                                 echo "<tr>
-                        <td class='py-2 px-4'>" . htmlspecialchars($row['doctor']) . "</td>
-                        <td class='py-2 px-4'>" . htmlspecialchars($row['appdate']) . "</td>
-                        <td class='py-2 px-4'>" . htmlspecialchars($row['apptime']) . "</td>
-                        <td class='py-2 px-4'>" . $status . "</td>
-                        <td class='py-2 px-4'>" . $actionButton . "</td>
-                    </tr>";
+            <td class='px-4 py-2 whitespace-nowrap'>" . htmlspecialchars($row['doctor']) . "</td>
+            <td class='px-4 py-2 whitespace-nowrap'>" . htmlspecialchars($row['appdate']) . "</td>
+            <td class='px-4 py-2 whitespace-nowrap'>" . htmlspecialchars($row['apptime']) . "</td>
+            <td class='px-4 py-2 whitespace-nowrap'>$status</td>
+            <td class='px-4 py-2 whitespace-nowrap'>$actionButton</td>
+          </tr>";
                             }
                             ?>
                         </tbody>
@@ -881,11 +913,14 @@ function get_specs()
                 </div>
             </section>
 
+
             <!-- Modal Structure -->
-            <div id="queueModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
+            <div id="queueModal"
+                class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
                 <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg relative">
                     <!-- Modal Close Button -->
-                    <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    <button id="closeModal"
+                        class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
 
                     <!-- Modal Content -->
                     <div id="queueContent">
@@ -894,66 +929,105 @@ function get_specs()
 
                     <!-- Print and Close Buttons at the Bottom -->
                     <div class="flex justify-between mt-6">
-                        <button id="printButton" class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Print</button>
-                        <button id="closeModalBottom" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Close</button>
+                        <button id="printButton"
+                            class="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600">Print</button>
+                        <button id="closeModalBottom"
+                            class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Close</button>
                     </div>
                 </div>
             </div>
 
-
-
             <!-- Prescriptions -->
-            <section id="prescriptions" class="section hidden">
+            <section id="prescriptions" class="section hidden mt-8">
                 <h4 class="text-xl font-semibold mb-4">Prescriptions</h4>
-                <div class="bg-white p-6 rounded shadow-md">
-                    <table class="min-w-full divide-y divide-gray-200">
+
+                <!-- Search Bar -->
+                <div class="flex mb-4">
+                    <form method="GET" class="flex space-x-4">
+                        <!-- Search Input -->
+                        <div class="flex items-center">
+                            <input type="text" name="search_prescription"
+                                placeholder="Search Patient ID, Date, Test Results, or Findings"
+                                class="form-input px-4 py-2 border rounded-md"
+                                value="<?php echo isset($_GET['search_prescription']) ? htmlspecialchars($_GET['search_prescription']) : ''; ?>" />
+                        </div>
+
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Search</button>
+                        <!-- Add a hidden input to maintain the active section -->
+                        <input type="hidden" name="section" value="prescriptions">
+                    </form>
+                </div>
+
+                <!-- Responsive Table Wrapper -->
+                <div class="overflow-x-auto bg-white shadow-md rounded-lg">
+                    <table class="table-auto w-full min-w-max divide-y divide-gray-200">
                         <thead class="bg-gray-100">
                             <tr>
-                                <th class="py-2 px-4 text-left text-gray-700">Patient ID</th>
-                                <th class="py-2 px-4 text-left text-gray-700">Date</th>
-                                <th class="py-2 px-4 text-left text-gray-700">Test Results</th>
-                                <th class="py-2 px-4 text-left text-gray-700">Findings</th>
-                                <th class="py-2 px-4 text-left text-gray-700">Prescription</th>
+                                <th class="px-4 py-2 text-left text-gray-700">Patient ID</th>
+                                <th class="px-4 py-2 text-left text-gray-700">Date</th>
+                                <th class="px-4 py-2 text-left text-gray-700">Test Results</th>
+                                <th class="px-4 py-2 text-left text-gray-700">Findings</th>
+                                <th class="px-4 py-2 text-left text-gray-700">Prescription</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-gray-200">
                             <?php
-                            $query = mysqli_query($con, "SELECT * FROM prestb WHERE pid='$pid'");
-                            while ($row = mysqli_fetch_assoc($query)) {
+                            // Capture the search term
+                            $search = isset($_GET['search_prescription']) ? mysqli_real_escape_string($con, $_GET['search_prescription']) : '';
+
+                            // Modify query to include search functionality
+                            $query = "SELECT * FROM prestb WHERE pid='$pid'";
+                            if ($search) {
+                                $query .= " AND (pid LIKE '%$search%' OR appdate LIKE '%$search%' OR disease LIKE '%$search%' OR allergy LIKE '%$search%' OR prescription LIKE '%$search%')";
+                            }
+
+                            // Execute the query
+                            $result = mysqli_query($con, $query);
+
+                            // Display results
+                            while ($row = mysqli_fetch_assoc($result)) {
                                 echo "<tr>
-                                <td class='py-2 px-4'>" . htmlspecialchars($row['pid']) . "</td>
-                                <td class='py-2 px-4'>" . htmlspecialchars($row['appdate']) . "</td>
-                                <td class='py-2 px-4'>" . htmlspecialchars($row['disease']) . "</td>
-                                <td class='py-2 px-4'>" . htmlspecialchars($row['allergy']) . "</td>
-                                <td class='py-2 px-4'>" . htmlspecialchars($row['prescription']) . "</td>
-                            </tr>";
+            <td class='px-4 py-2 whitespace-nowrap'>" . htmlspecialchars($row['pid']) . "</td>
+            <td class='px-4 py-2 whitespace-nowrap'>" . htmlspecialchars($row['appdate']) . "</td>
+            <td class='px-4 py-2 whitespace-nowrap'>" . htmlspecialchars($row['disease']) . "</td>
+            <td class='px-4 py-2 whitespace-nowrap'>" . htmlspecialchars($row['allergy']) . "</td>
+            <td class='px-4 py-2 whitespace-nowrap'>" . htmlspecialchars($row['prescription']) . "</td>
+          </tr>";
+                            }
+
+                            // Display a message if no records found
+                            if (mysqli_num_rows($result) == 0) {
+                                echo "<tr>
+            <td colspan='5' class='text-center px-4 py-4 text-gray-500'>No prescriptions found.</td>
+          </tr>";
                             }
                             ?>
                         </tbody>
                     </table>
                 </div>
             </section>
-        </main>
-    </div>
 
 
-    <!-- Success/Failure Modal -->
-    <div id="messageModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg relative">
-            <!-- Modal Close Button -->
-            <button id="closeMessageModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            <!-- Success/Failure Modal -->
+            <div id="messageModal"
+                class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
+                <div class="bg-white rounded-lg shadow-lg p-8 w-full max-w-lg relative">
+                    <!-- Modal Close Button -->
+                    <button id="closeMessageModal"
+                        class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
 
-            <!-- Modal Content -->
-            <div id="messageContent" class="text-center">
-                <!-- Success/Failure message will be dynamically inserted here -->
+                    <!-- Modal Content -->
+                    <div id="messageContent" class="text-center">
+                        <!-- Success/Failure message will be dynamically inserted here -->
+                    </div>
+
+                    <!-- Close Button at the Bottom -->
+                    <div class="flex justify-center mt-6">
+                        <button id="closeModalButton"
+                            class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Close</button>
+                    </div>
+                </div>
             </div>
-
-            <!-- Close Button at the Bottom -->
-            <div class="flex justify-center mt-6">
-                <button id="closeModalButton" class="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Close</button>
-            </div>
-        </div>
-    </div>
 
 
 </body>

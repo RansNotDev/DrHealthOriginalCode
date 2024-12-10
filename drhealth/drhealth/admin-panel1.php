@@ -62,7 +62,7 @@
     }
 
     // On page load, check if a hash is present in the URL and show the correct section
-    window.onload = function() {
+    window.onload = function () {
       handleHashChange();
     };
 
@@ -309,25 +309,30 @@
 
   <div class="flex h-screen space-x-6 p-4">
     <!-- Sidebar -->
-    <nav class="sidebar w-64 p-6 space-y-6">
+    <nav class="sidebar w-64 p-6 space-y-4 hidden lg:block">
       <div class="text-center text-2xl font-bold">D.R. Health Medical and Diagnostic Center</div>
 
       <ul>
-        <li><a href="#dashboard" class="block w-full py-2 px-4 rounded hover:bg-pastel-green active"> <i class="fa fa-tachometer-alt"></i> Dashboard</a></li>
-        <li><a href="#list-doc" class="block w-full py-2 px-4 rounded hover:bg-pastel-green"> <i class="fa fa-user-md"></i> Doctor List</a></li>
-        <li><a href="#list-pat" class="block w-full py-2 px-4 rounded hover:bg-pastel-green"> <i class="fa fa-user"></i> Patient List</a></li>
-        <li><a href="#list-app" class="block w-full py-2 px-4 rounded hover:bg-pastel-green"> <i class="fa fa-calendar-alt"></i> Appointment Details</a></li>
-        <li><a href="#add-doctor" class="block w-full py-2 px-4 rounded hover:bg-pastel-green"> <i class="fa fa-user-plus"></i> Add Doctor</a></li>
-        <li><a href="#list-archived" class="block w-full py-2 px-4 rounded hover:bg-pastel-green"> <i class="fa fa-archive"></i> Archived Doctor</a></li>
-        <li><a href="#monthly-reports" class="block w-full py-2 px-4 rounded hover:bg-pastel-green"> <i class="fa fa-file-alt"></i> Monthly Reports</a></li>
+        <li><a href="#dashboard" class="block w-full py-2 px-4 rounded hover:bg-pastel-green active"><i
+              class="fa fa-tachometer-alt"></i> Dashboard</a></li>
+        <li><a href="#list-doc" class="block w-full py-2 px-4 rounded hover:bg-pastel-green"><i
+              class="fa fa-user-md"></i> Doctor List</a></li>
+        <li><a href="#list-pat" class="block w-full py-2 px-4 rounded hover:bg-pastel-green"><i class="fa fa-user"></i>
+            Patient List</a></li>
+        <li><a href="#list-app" class="block w-full py-2 px-4 rounded hover:bg-pastel-green"><i
+              class="fa fa-calendar-alt"></i> Appointment Details</a></li>
+        <li><a href="#add-doctor" class="block w-full py-2 px-4 rounded hover:bg-pastel-green"><i
+              class="fa fa-user-plus"></i> Add Doctor</a></li>
+        <li><a href="#list-archived" class="block w-full py-2 px-4 rounded hover:bg-pastel-green"><i
+              class="fa fa-archive"></i> Archived Doctor</a></li>
+        <li><a href="#monthly-reports" class="block w-full py-2 px-4 rounded hover:bg-pastel-green"><i
+              class="fa fa-file-alt"></i> Monthly Reports</a></li>
       </ul>
     </nav>
 
+    <!-- Main content -->
 
-    <!-- Main Content -->
-    <main class="flex-1 p-6">
-      <h3 class="text-2xl font-bold mb-4">Welcome, Admin!</h3>
-
+    <div class="flex-1 overflow-y-auto">
       <!-- Dashboard -->
       <section id="dashboard" class="section">
         <h4 class="text-xl font-semibold mb-4">Dashboard</h4>
@@ -337,7 +342,9 @@
             <span class="text-4xl text-blue-500"><i class="fa fa-calendar"></i></span>
             <h5 class="mt-4 text-lg font-semibold text-gray-800">Doctor List</h5>
             <p class="mt-2">
-              <button onclick="showDiv('list-doc')" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-800 transition duration-300" style="background:   #0D409E" ;>
+              <button onclick="showDiv('list-doc')"
+                class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-800 transition duration-300"
+                style="background:   #0D409E" ;>
                 View Doctors
               </button>
 
@@ -349,7 +356,9 @@
             <span class="text-4xl text-blue-500"><i class="fa fa-history"></i></span>
             <h5 class="mt-4 text-lg font-semibold text-gray-800">Patient List</h5>
             <p class="mt-2">
-              <button onclick="showDiv('list-pat')" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-800 transition duration-300" style="background:   #0D409E" ;>
+              <button onclick="showDiv('list-pat')"
+                class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-800 transition duration-300"
+                style="background:   #0D409E" ;>
                 View Patients
               </button>
 
@@ -361,7 +370,9 @@
             <span class="text-4xl text-blue-500"><i class="fa fa-file-text"></i></span>
             <h5 class="mt-4 text-lg font-semibold text-gray-800">Appointment Details</h5>
             <p class="mt-2">
-              <button onclick="showDiv('list-app')" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-800 transition duration-300" style="background:   #0D409E" ;>
+              <button onclick="showDiv('list-app')"
+                class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-800 transition duration-300"
+                style="background:   #0D409E" ;>
                 View Appointments
               </button>
 
@@ -374,7 +385,9 @@
             <span class="text-4xl text-blue-500"><i class="fa fa-user-md"></i></span>
             <h5 class="mt-4 text-lg font-semibold text-gray-800">Add Doctor</h5>
             <p class="mt-2">
-              <button onclick="showDiv('add-doctor')" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-800 transition duration-300" style="background:   #0D409E" ;>
+              <button onclick="showDiv('add-doctor')"
+                class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-800 transition duration-300"
+                style="background:   #0D409E" ;>
                 Add Doctor
               </button>
 
@@ -386,7 +399,9 @@
             <span class="text-4xl text-blue-500"><i class="fa fa-archive"></i></span>
             <h5 class="mt-4 text-lg font-semibold text-gray-800">Archived Doctor</h5>
             <p class="mt-2">
-              <button onclick="showDiv('list-archived')" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-800 transition duration-300" style="background:   #0D409E" ;>
+              <button onclick="showDiv('list-archived')"
+                class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-800 transition duration-300"
+                style="background:   #0D409E" ;>
                 View Archived
               </button>
 
@@ -398,7 +413,9 @@
             <span class="text-4xl text-blue-500"><i class="fa fa-chart-line"></i></span>
             <h5 class="mt-4 text-lg font-semibold text-gray-800">Monthly Reports</h5>
             <p class="mt-2">
-              <button onclick="showDiv('monthly-reports')" class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-800 transition duration-300" style="background:   #0D409E" ;>
+              <button onclick="showDiv('monthly-reports')"
+                class="bg-blue-600 text-white font-semibold py-2 px-4 rounded hover:bg-blue-800 transition duration-300"
+                style="background:   #0D409E" ;>
                 View Monthly Reports
               </button>
 
@@ -407,6 +424,7 @@
         </div>
 
       </section>
+
       <?php
       error_reporting(E_ALL);
       ini_set('display_errors', 1);
@@ -420,22 +438,22 @@
             <!-- First Name -->
             <div class="mb-4">
               <label for="dfname" class="block text-gray-700">First Name:</label>
-              <input type="text" name="dfname" class="form-input mt-1 block w-full"
-                pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" required>
+              <input type="text" name="dfname" class="form-input mt-1 block w-full" pattern="[A-Za-z\s]+"
+                title="Only letters and spaces are allowed" required>
             </div>
 
             <!-- Last Name -->
             <div class="mb-4">
               <label for="dlname" class="block text-gray-700">Last Name:</label>
-              <input type="text" name="dlname" class="form-input mt-1 block w-full"
-                pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" required>
+              <input type="text" name="dlname" class="form-input mt-1 block w-full" pattern="[A-Za-z\s]+"
+                title="Only letters and spaces are allowed" required>
             </div>
 
             <!-- Middle Name -->
             <div class="mb-4">
               <label for="dmname" class="block text-gray-700">Middle Name:</label>
-              <input type="text" name="dmname" class="form-input mt-1 block w-full"
-                pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed">
+              <input type="text" name="dmname" class="form-input mt-1 block w-full" pattern="[A-Za-z\s]+"
+                title="Only letters and spaces are allowed">
             </div>
 
             <!-- Age -->
@@ -447,8 +465,8 @@
             <!-- Contact Number -->
             <div class="mb-4">
               <label for="dcontact" class="block text-gray-700">Contact Number:</label>
-              <input type="tel" name="dcontact" class="form-input mt-1 block w-full"
-                pattern="[0-9]{10,11}" maxlength="11" placeholder="10-11 digit number" required
+              <input type="tel" name="dcontact" class="form-input mt-1 block w-full" pattern="[0-9]{10,11}"
+                maxlength="11" placeholder="10-11 digit number" required
                 title="Only numeric values are allowed, 10-11 digits">
             </div>
 
@@ -500,34 +518,78 @@
           </form>
         </div>
       </section>
+
       <!-- Doctor List -->
-      <section id="list-doc" class="section hidden">
+      <section id="list-doc" class="section hidden mt-8">
         <h4 class="text-xl font-semibold mb-4">Doctor List</h4>
-        <div class="table-container">
-          <table class="table-auto w-full">
+
+        <!-- Search and Filter -->
+        <div class="flex mb-4">
+          <!-- Search Input -->
+          <form method="GET" class="flex space-x-4">
+            <div class="flex items-center">
+              <input type="text" name="search" placeholder="Search Doctor Name or ID"
+                class="form-input px-4 py-2 border rounded-md"
+                value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" />
+            </div>
+
+            <!-- Status Filter Dropdown -->
+            <div class="flex items-center">
+              <select name="status" class="form-select px-4 py-2 border rounded-md">
+                <option value="">All</option>
+                <option value="active" <?php echo isset($_GET['status']) && $_GET['status'] == 'active' ? 'selected' : ''; ?>>Active</option>
+                <option value="archived" <?php echo isset($_GET['status']) && $_GET['status'] == 'archived' ? 'selected' : ''; ?>>Archived</option>
+              </select>
+            </div>
+
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Search</button>
+          </form>
+        </div>
+
+        <!-- Doctor List Table -->
+        <div class="overflow-x-auto">
+          <table class="table-auto w-full min-w-max">
             <thead>
               <tr>
                 <th class="px-4 py-2">ID</th>
                 <th class="px-4 py-2">Doctor Name</th>
                 <th class="px-4 py-2">Specialization</th>
                 <th class="px-4 py-2">Email</th>
-                <th class="px-4 py-2">Password</th>
                 <th class="px-4 py-2">Status</th>
                 <th class="px-4 py-2">Action</th>
               </tr>
             </thead>
             <tbody>
               <?php
-              $query = "SELECT * FROM doctb";
+              // Capture search and status filter
+              $search = isset($_GET['search']) ? mysqli_real_escape_string($con, $_GET['search']) : '';
+              $statusFilter = isset($_GET['status']) ? mysqli_real_escape_string($con, $_GET['status']) : '';
+
+              // Build the query with search and status filter conditions
+              $query = "SELECT * FROM doctb WHERE 1";
+
+              // Add search condition
+              if ($search) {
+                $query .= " AND (username LIKE '%$search%' OR id LIKE '%$search%')";
+              }
+
+              // Add status filter condition
+              if ($statusFilter) {
+                $query .= " AND status = '$statusFilter'";
+              }
+
+              // Execute the query
               $result = mysqli_query($con, $query);
+
+              // Loop through and display the results
               while ($row = mysqli_fetch_array($result)) {
                 $id = isset($row['id']) ? $row['id'] : '';
                 $username = isset($row['username']) ? $row['username'] : '';
                 $spec = isset($row['spec']) ? $row['spec'] : '';
                 $email = isset($row['email']) ? $row['email'] : '';
-                $password = isset($row['password']) ? $row['password'] : '';
                 $status = isset($row['status']) ? $row['status'] : '';
 
+                // Determine button label and new status for action
                 if ($status == 'archived') {
                   $buttonLabel = "Unarchive";
                   $newStatus = 'active';
@@ -536,21 +598,21 @@
                   $newStatus = 'archived';
                 }
 
-                echo "<tr>
-                      <td class='border px-4 py-2'>$id</td>
-                      <td class='border px-4 py-2'>$username</td>
-                      <td class='border px-4 py-2'>$spec</td>
-                      <td class='border px-4 py-2'>$email</td>
-                      <td class='border px-4 py-2'>$password</td>
-                      <td class='border px-4 py-2'>$status</td>
-                      <td class='border px-4 py-2'>
-                        <form action='admin-panel1.php' method='POST'>
-                          <input type='hidden' name='demail' value='$email'>
-                          <input type='hidden' name='new_status' value='$newStatus'>
-                          <button type='submit' name='change_status' class='btn btn-blue'>$buttonLabel</button>
-                        </form>
-                      </td>
-                    </tr>";
+                // Display the row
+                echo "<tr class='border-b'>
+            <td class='border px-4 py-2'>$id</td>
+            <td class='border px-4 py-2'>$username</td>
+            <td class='border px-4 py-2'>$spec</td>
+            <td class='border px-4 py-2'>$email</td>
+            <td class='border px-4 py-2'>$status</td>
+            <td class='border px-4 py-2'>
+              <form action='admin-panel1.php' method='POST'>
+                <input type='hidden' name='demail' value='$email'>
+                <input type='hidden' name='new_status' value='$newStatus'>
+                <button type='submit' name='change_status' class='bg-blue-600 text-white px-4 py-2 rounded'>$buttonLabel</button>
+              </form>
+            </td>
+          </tr>";
               }
               ?>
             </tbody>
@@ -559,10 +621,26 @@
       </section>
 
       <!-- Patient List -->
-      <section id="list-pat" class="section hidden">
+      <section id="list-pat" class="section hidden mt-8">
         <h4 class="text-xl font-semibold mb-4">Patient List</h4>
-        <div class="table-container">
-          <table class="table-auto w-full">
+
+        <!-- Search Bar -->
+        <div class="flex mb-4">
+          <form method="GET" class="flex space-x-4">
+            <!-- Search Input -->
+            <div class="flex items-center">
+              <input type="text" name="search" placeholder="Search Patient ID, Name, or Doctor"
+                class="form-input px-4 py-2 border rounded-md"
+                value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" />
+            </div>
+
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Search</button>
+          </form>
+        </div>
+
+        <!-- Patient List Table -->
+        <div class="overflow-x-auto">
+          <table class="table-auto w-full min-w-max">
             <thead>
               <tr>
                 <th class="px-4 py-2">Patient ID</th>
@@ -577,9 +655,21 @@
             </thead>
             <tbody>
               <?php
-              // Modify the query to only select confirmed appointments
+              // Capture the search term
+              $search = isset($_GET['search']) ? mysqli_real_escape_string($con, $_GET['search']) : '';
+
+              // Modify the query to include search functionality
               $query = "SELECT * FROM appointmenttb WHERE doctorStatus = 2";
+
+              // Add search condition if a search term is provided
+              if ($search) {
+                $query .= " AND (pid LIKE '%$search%' OR fname LIKE '%$search%' OR lname LIKE '%$search%' OR doctor LIKE '%$search%')";
+              }
+
+              // Execute the query
               $result = mysqli_query($con, $query);
+
+              // Loop through and display the results
               while ($row = mysqli_fetch_array($result)) {
                 $pid = isset($row['pid']) ? $row['pid'] : '';
                 $fname = isset($row['fname']) ? $row['fname'] : '';
@@ -589,29 +679,44 @@
                 $contact = isset($row['contact']) ? $row['contact'] : '';
                 $doctor = isset($row['doctor']) ? $row['doctor'] : '';
                 $appdate = isset($row['appdate']) ? $row['appdate'] : '';
-                echo "<tr>
-                      <td class='border px-4 py-2'>$pid</td>
-                      <td class='border px-4 py-2'>$fname</td>
-                      <td class='border px-4 py-2'>$lname</td>
-                      <td class='border px-4 py-2'>$gender</td>
-                      <td class='border px-4 py-2'>$email</td>
-                      <td class='border px-4 py-2'>$contact</td>
-                      <td class='border px-4 py-2'>$doctor</td>
-                      <td class='border px-4 py-2'>$appdate</td>
-                    </tr>";
+
+                echo "<tr class='border-b'>
+            <td class='border px-4 py-2'>$pid</td>
+            <td class='border px-4 py-2'>$fname</td>
+            <td class='border px-4 py-2'>$lname</td>
+            <td class='border px-4 py-2'>$gender</td>
+            <td class='border px-4 py-2'>$email</td>
+            <td class='border px-4 py-2'>$contact</td>
+            <td class='border px-4 py-2'>$doctor</td>
+            <td class='border px-4 py-2'>$appdate</td>
+          </tr>";
               }
               ?>
             </tbody>
           </table>
         </div>
       </section>
-
-
       <!-- Archived Doctor List -->
-      <section id="list-archived" class="section hidden">
+      <section id="list-archived" class="section hidden mt-8">
         <h4 class="text-xl font-semibold mb-4">Archived Doctor List</h4>
-        <div class="table-container">
-          <table class="table-auto w-full">
+
+        <!-- Search Bar -->
+        <div class="flex mb-4">
+          <form method="GET" class="flex space-x-4">
+            <!-- Search Input -->
+            <div class="flex items-center">
+              <input type="text" name="search" placeholder="Search by ID, Name, Specialization, or Email"
+                class="form-input px-4 py-2 border rounded-md"
+                value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" />
+            </div>
+
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Search</button>
+          </form>
+        </div>
+
+        <!-- Archived Doctor List Table -->
+        <div class="overflow-x-auto">
+          <table class="table-auto w-full min-w-max">
             <thead>
               <tr>
                 <th class="px-4 py-2">ID</th>
@@ -622,31 +727,45 @@
             </thead>
             <tbody>
               <?php
+              // Capture the search term if available
+              $search = isset($_GET['search']) ? mysqli_real_escape_string($con, $_GET['search']) : '';
+
+              // Base query to select archived doctors
               $query = "SELECT * FROM doctb WHERE status = 'archived'";
+
+              // If there is a search term, modify the query to include search conditions
+              if ($search) {
+                $query .= " AND (id LIKE '%$search%' OR username LIKE '%$search%' OR spec LIKE '%$search%' OR email LIKE '%$search%')";
+              }
+
+              // Execute the query
               $result = mysqli_query($con, $query);
+
+              // Loop through the results and display them in the table
               while ($row = mysqli_fetch_array($result)) {
                 $id = isset($row['id']) ? $row['id'] : '';
                 $username = isset($row['username']) ? $row['username'] : '';
                 $spec = isset($row['spec']) ? $row['spec'] : '';
                 $email = isset($row['email']) ? $row['email'] : '';
-                echo "<tr>
-                      <td class='border px-4 py-2'>$id</td>
-                      <td class='border px-4 py-2'>$username</td>
-                      <td class='border px-4 py-2'>$spec</td>
-                      <td class='border px-4 py-2'>$email</td>
-                    </tr>";
+
+                echo "<tr class='border-b'>
+            <td class='border px-4 py-2'>$id</td>
+            <td class='border px-4 py-2'>$username</td>
+            <td class='border px-4 py-2'>$spec</td>
+            <td class='border px-4 py-2'>$email</td>
+          </tr>";
               }
               ?>
             </tbody>
           </table>
         </div>
       </section>
-
       <!-- Appointment Details -->
-      <section id="list-app" class="section hidden">
+      <section id="list-app" class="section hidden mt-8">
         <h4 class="text-xl font-semibold mb-4">Appointment Details</h4>
-        <div class="table-container">
-          <table class="table-auto w-full">
+
+        <div class="overflow-x-auto">
+          <table class="table-auto w-full min-w-max">
             <thead>
               <tr>
                 <th class="px-4 py-2">Patient ID</th>
@@ -662,16 +781,12 @@
             </thead>
             <tbody>
               <?php
-
-
               $query = "SELECT p.pid, p.fname, p.lname, p.age, p.gender, p.email, p.contact, p.address, a.userStatus, a.doctorStatus 
-                      FROM patreg p 
-                      LEFT JOIN appointmenttb a ON p.pid = a.pid";
+                  FROM patreg p 
+                  LEFT JOIN appointmenttb a ON p.pid = a.pid";
               $result = mysqli_query($con, $query);
 
-              $patientsData = [];
               while ($row = mysqli_fetch_assoc($result)) {
-                $patientsData[] = $row;
                 $pid = isset($row['pid']) ? $row['pid'] : '';
                 $fname = isset($row['fname']) ? $row['fname'] : '';
                 $lname = isset($row['lname']) ? $row['lname'] : '';
@@ -694,21 +809,17 @@
                   $status = "<strong>Confirmed</strong>";
                 }
 
-                // Example for Appointment Details
-
-
-
-                echo "<tr>
-                      <td class='border px-4 py-2'>$pid</td>
-                      <td class='border px-4 py-2'>$fname</td>
-                      <td class='border px-4 py-2'>$lname</td>
-                      <td class='border px-4 py-2'>$age</td>
-                      <td class='border px-4 py-2'>$gender</td>
-                      <td class='border px-4 py-2'>$email</td>
-                      <td class='border px-4 py-2'>$contact</td>
-                      <td class='border px-4 py-2'>$address</td>
-                      <td class='border px-4 py-2'>$status</td>
-                    </tr>";
+                echo "<tr class='border-b'>
+                <td class='border px-4 py-2'>$pid</td>
+                <td class='border px-4 py-2'>$fname</td>
+                <td class='border px-4 py-2'>$lname</td>
+                <td class='border px-4 py-2'>$age</td>
+                <td class='border px-4 py-2'>$gender</td>
+                <td class='border px-4 py-2'>$email</td>
+                <td class='border px-4 py-2'>$contact</td>
+                <td class='border px-4 py-2'>$address</td>
+                <td class='border px-4 py-2'>$status</td>
+              </tr>";
               }
               ?>
             </tbody>
@@ -841,46 +952,47 @@
           </div>
         </div>
       </section>
+    </div>
 
-      <!-- Include Chart.js -->
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Include Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-      <!-- Chart.js logic -->
-      <script>
-        if (typeof statusData !== 'undefined') {
-          var ctx = document.getElementById('statusChart').getContext('2d');
-          var statusChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-              labels: ['Pending', 'Cancelled by Patient', 'Cancelled by Doctor', 'Confirmed'],
-              datasets: [{
-                label: 'Number of Appointments',
-                data: [statusData['Pending'], statusData['Cancelled by Patient'], statusData['Cancelled by Doctor'], statusData['Confirmed']],
-                backgroundColor: [
-                  'rgba(54, 162, 235, 0.2)',
-                  'rgba(255, 99, 132, 0.2)',
-                  'rgba(255, 206, 86, 0.2)',
-                  'rgba(75, 192, 192, 0.2)'
-                ],
-                borderColor: [
-                  'rgba(54, 162, 235, 1)',
-                  'rgba(255, 99, 132, 1)',
-                  'rgba(255, 206, 86, 1)',
-                  'rgba(75, 192, 192, 1)'
-                ],
-                borderWidth: 1
-              }]
-            },
-            options: {
-              scales: {
-                y: {
-                  beginAtZero: true
-                }
+    <!-- Chart.js logic -->
+    <script>
+      if (typeof statusData !== 'undefined') {
+        var ctx = document.getElementById('statusChart').getContext('2d');
+        var statusChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Pending', 'Cancelled by Patient', 'Cancelled by Doctor', 'Confirmed'],
+            datasets: [{
+              label: 'Number of Appointments',
+              data: [statusData['Pending'], statusData['Cancelled by Patient'], statusData['Cancelled by Doctor'], statusData['Confirmed']],
+              backgroundColor: [
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)'
+              ],
+              borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)'
+              ],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
               }
             }
-          });
-        }
-      </script>
+          }
+        });
+      }
+    </script>
 
     </main>
   </div>
@@ -911,7 +1023,7 @@
     }
 
     // On page load, check if a hash is present in the URL and show the correct section
-    window.onload = function() {
+    window.onload = function () {
       handleHashChange();
     };
 
@@ -921,7 +1033,7 @@
 
 
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
       // Automatically generate a random password and fill the password field
       function generateRandomPassword(length) {
         const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
