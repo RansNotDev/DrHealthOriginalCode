@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 10, 2024 at 02:25 PM
+-- Generation Time: Dec 10, 2024 at 03:04 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -69,11 +69,8 @@ CREATE TABLE `appointmenttb` (
 --
 
 INSERT INTO `appointmenttb` (`pid`, `ID`, `fname`, `lname`, `age`, `gender`, `email`, `contact`, `doctor`, `docFees`, `appdate`, `apptime`, `userStatus`, `doctorStatus`, `queue_number`, `reference_number`) VALUES
-(15, 34, 'Li', 'Sevidal', 0, 'Male', 'lithiumsevidal@gmail.com', '0910170074', 'Doc Christian', 0, '2024-09-04', '09:00:00', 0, 1, NULL, ''),
-(15, 35, 'Li', 'Sevidal', 0, 'Male', 'lithiumsevidal@gmail.com', '0910170074', 'Doc Christian', 0, '2024-09-04', '08:00:00', 0, 1, NULL, ''),
-(15, 36, 'Li', 'Sevidal', 23, 'Male', 'lithiumsevidal@gmail.com', '0910170074', 'Doc Christian', 0, '2024-09-04', '13:00:00', 0, 1, NULL, ''),
-(15, 37, 'Li', 'Sevidal', 23, 'Male', 'lithiumsevidal@gmail.com', '0910170074', 'Doc Christian', 0, '2024-09-05', '08:00:00', 0, 1, NULL, ''),
-(15, 38, 'Li', 'Sevidal', 23, 'Male', 'lithiumsevidal@gmail.com', '0910170074', 'Doc Christian', 0, '2024-09-11', '09:00:00', 0, 1, NULL, '');
+(18, 46, 'Rany Boy', 'Templado', 23, 'Male', 'ranyboytemplado001@gmail.com', '0963596324', 'Dr. Rans v temps', 0, '2024-12-12', '09:00:00', 2, 2, 2, 'DB2CD404CBD69135'),
+(18, 47, 'Rany Boy', 'Templado', 23, 'Male', 'ranyboytemplado001@gmail.com', '0963596324', 'Dr. Rans v temps', 0, '2024-12-11', '07:00:00', 2, 2, 3, '9B55345B3588064F');
 
 -- --------------------------------------------------------
 
@@ -111,7 +108,12 @@ INSERT INTO `availabilitytb` (`id`, `doctor`, `available_date`) VALUES
 (58, 'Doc Christian', '2024-09-11'),
 (59, 'Doc Christian', '2024-09-12'),
 (60, 'Doc Christian', '2024-09-13'),
-(61, 'Doc Christian', '2024-09-14');
+(61, 'Doc Christian', '2024-09-14'),
+(71, 'Dr. Rans v temps', '2024-12-10'),
+(72, 'Dr. Rans v temps', '2024-12-11'),
+(73, 'Dr. Rans v temps', '2024-12-12'),
+(74, 'Dr. Rans v temps', '2024-12-13'),
+(75, 'Dr. Rans v temps', '2024-12-14');
 
 -- --------------------------------------------------------
 
@@ -156,16 +158,23 @@ CREATE TABLE `doctb` (
   `docFees` int(10) NOT NULL,
   `status` varchar(50) NOT NULL DEFAULT 'active',
   `start_time` time NOT NULL,
-  `end_time` time NOT NULL
+  `end_time` time NOT NULL,
+  `first_name` varchar(255) NOT NULL,
+  `middle_name` varchar(255) NOT NULL,
+  `last_name` varchar(255) NOT NULL,
+  `age` int(255) NOT NULL,
+  `contact_number` int(255) NOT NULL,
+  `gender` int(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `doctb`
 --
 
-INSERT INTO `doctb` (`id`, `username`, `password`, `email`, `spec`, `docFees`, `status`, `start_time`, `end_time`) VALUES
-(6, 'Doc Christian', 'christianmark', 'christianmorado@gmail.com', 'Internal Medicine Cardiology', 600, 'active', '08:00:00', '17:00:00'),
-(8, 'DocLi', 'docli', 'Docli@gmail.com', 'Internal Medicine Cardiology', 0, 'active', '00:00:00', '00:00:00');
+INSERT INTO `doctb` (`id`, `username`, `password`, `email`, `spec`, `docFees`, `status`, `start_time`, `end_time`, `first_name`, `middle_name`, `last_name`, `age`, `contact_number`, `gender`) VALUES
+(6, 'Doc Christian', 'christianmark', 'christianmorado@gmail.com', 'Internal Medicine Cardiology', 600, 'active', '08:00:00', '17:00:00', '', '', '', 0, 0, 0),
+(8, 'DocLi', 'docli', 'Docli@gmail.com', 'Internal Medicine Cardiology', 0, 'archived', '00:00:00', '00:00:00', '', '', '', 0, 0, 0),
+(9, 'Dr. Rans v temps', 'Ranney@2001', 'ranney.templado20@gmail.com', 'Pediatrics', 0, 'active', '07:00:00', '18:00:00', 'Rans', 'v', 'temps', 22, 2147483647, 0);
 
 -- --------------------------------------------------------
 
@@ -192,7 +201,8 @@ CREATE TABLE `patreg` (
 
 INSERT INTO `patreg` (`pid`, `fname`, `lname`, `age`, `gender`, `email`, `contact`, `password`, `cpassword`, `address`) VALUES
 (15, 'Li', 'Sevidal', 23, 'Male', 'lithiumsevidal@gmail.com', '0910170074', 'lisevidal', 'lisevidal', '29, Quibaol'),
-(17, 'Li', 'Sevidal', 23, 'Male', 'li.m.sevidal@gmail.com', '9509972084', '12345', '', '29, Quibaol');
+(17, 'Li', 'Sevidal', 23, 'Male', 'li.m.sevidal@gmail.com', '9509972084', '12345', '', '29, Quibaol'),
+(18, 'Rany Boy', 'Templado', 23, 'Male', 'ranyboytemplado001@gmail.com', '0963596324', 'Ranney@2001', '', 'Poblacion, Malasiqui, Malasiqui');
 
 -- --------------------------------------------------------
 
@@ -225,7 +235,8 @@ INSERT INTO `prestb` (`doctor`, `pid`, `ID`, `fname`, `lname`, `age`, `appdate`,
 ('Tiwary', 9, 13, 'William', 'Blake', 50, '2020-03-26', '14:00:00', 'Cough', 'Skin dryness', 'Intake fruits with more water content'),
 ('ashok', 11, 4, 'Shraddha', 'Kapoor', 0, '2020-02-29', '20:00:00', 'galis', 'ubo', 'gamot'),
 ('arun', 1, 15, 'Ram', 'Kumar', 0, '2024-07-29', '22:22:00', 'galis', 'burog', 'tambal'),
-('Doc Christian', 13, 20, 'Li', 'Sevidal', 0, '2024-08-07', '13:04:00', 'Malaria', 'N/A', 'biogesic');
+('Doc Christian', 13, 20, 'Li', 'Sevidal', 0, '2024-08-07', '13:04:00', 'Malaria', 'N/A', 'biogesic'),
+('Dr. Rans v temps', 18, 39, 'Rany Boy', 'Templado', 0, '2024-12-11', '07:00:00', 'asd', 'dfg', 'asd');
 
 --
 -- Indexes for dumped tables
@@ -270,7 +281,7 @@ ALTER TABLE `patreg`
 -- AUTO_INCREMENT for table `appointmenttb`
 --
 ALTER TABLE `appointmenttb`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `archived_doctors`
@@ -282,19 +293,19 @@ ALTER TABLE `archived_doctors`
 -- AUTO_INCREMENT for table `availabilitytb`
 --
 ALTER TABLE `availabilitytb`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
 
 --
 -- AUTO_INCREMENT for table `doctb`
 --
 ALTER TABLE `doctb`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `patreg`
 --
 ALTER TABLE `patreg`
-  MODIFY `pid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `pid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
