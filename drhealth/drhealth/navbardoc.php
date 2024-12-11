@@ -107,7 +107,7 @@ ob_start(); // Starts output buffering
         // Confirm logout with a popup and redirect to the login page if confirmed
         function confirmLogout() {
             if (confirm("Are you sure you want to log out?")) {
-                window.location.href = "login.php"; // Replace with your login page URL
+                window.location.href = "logout1.php"; // Replace with your login page URL
             }
         }
 

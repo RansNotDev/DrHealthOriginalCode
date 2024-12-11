@@ -1,10 +1,22 @@
 <?php
 
+// Start the session first
+session_start();
+
+// Check if the session is valid (i.e., the user is logged in)
+if (!isset($_SESSION['email'])) {
+    // If not logged in, redirect to the login page
+    header("Location: index.php");
+    exit();
+}
+
+// Include other necessary files after checking the session
 include('db.php');
 include('func.php');
 include('newfunc.php');
 include('navbar.php');
 
+// Your database connection and other logic
 $con = mysqli_connect("localhost", "root", "", "myhmsdb");
 
 $pid = $_SESSION['pid'];
@@ -105,7 +117,132 @@ function get_specs()
     }
     return json_encode($docarray);
 }
+function get_patient_info($con)
+{
+    // Get the logged-in patient's email from the session
+    $patient_email = $_SESSION['email'];
 
+    // Prepare the SQL query to get patient info
+    $query = "SELECT fname, lname, age, contact, address FROM patreg WHERE email = ?";
+    $stmt = $con->prepare($query);
+    $stmt->bind_param("s", $patient_email);  // Bind the patient's email
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Check if patient data is found
+    if ($result->num_rows > 0) {
+        $patient_info = $result->fetch_assoc();
+
+        // Split the address into municipality, city, barangay
+        $address_parts = explode(',', $patient_info['address']);
+        $patient_info['municipality'] = trim($address_parts[0] ?? '');
+        $patient_info['city'] = trim($address_parts[1] ?? '');
+        $patient_info['barangay'] = trim($address_parts[2] ?? '');
+
+        return $patient_info;
+    } else {
+        return false;  // Return false if no data is found
+    }
+}
+
+// Get patient information from the database
+$patient_info = get_patient_info($con);
+
+// If patient info is found, populate form fields
+if ($patient_info) {
+    $first_name = htmlspecialchars($patient_info['fname']);
+    $last_name = htmlspecialchars($patient_info['lname']);
+    $age = htmlspecialchars($patient_info['age']);
+    $contact = htmlspecialchars($patient_info['contact']);
+    $municipality = htmlspecialchars($patient_info['municipality']);
+    $city = htmlspecialchars($patient_info['city']);
+    $barangay = htmlspecialchars($patient_info['barangay']);
+} else {
+    // Handle the case where no patient info is found (optional)
+    echo "Patient information not found.";
+}
+
+function update_patient_info($con, $first_name, $last_name, $age, $contact_no, $new_password = null)
+{
+    // Get the logged-in patient's email from the session
+    $patient_email = $_SESSION['email'];
+
+    if (!empty($new_password)) {
+        // If a new password is provided, update it along with other details
+        $query = "UPDATE patreg SET fname = ?, lname = ?, age = ?, contact = ?, password = ? WHERE email = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("ssssss", $first_name, $last_name, $age, $contact_no, $new_password, $patient_email);
+    } else {
+        // If no new password is provided, exclude the password field
+        $query = "UPDATE patreg SET fname = ?, lname = ?, age = ?, contact = ? WHERE email = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("sssss", $first_name, $last_name, $age, $contact_no, $patient_email);
+    }
+
+    // Execute the query
+    if ($stmt->execute()) {
+        // If the update is successful, update the session with the new information
+        $_SESSION['fname'] = $first_name;
+        $_SESSION['lname'] = $last_name;
+        $_SESSION['age'] = $age;
+        $_SESSION['contact'] = $contact_no;
+    } else {
+        // Handle failure
+        echo "Error updating profile: " . $stmt->error;
+    }
+}
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
+    // Collect form data
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
+    $age = $_POST['age'];
+    $contact_no = "+639" . $_POST['contact_no'];  // Prepend +639 to the contact number
+    $municipality = $_POST['municipality'];
+    $city = $_POST['city'];
+    $barangay = $_POST['barangay'];
+    $current_password = $_POST['current_password'];
+    $new_password = $_POST['new_password'];
+    $confirm_password = $_POST['confirm_password'];
+
+    // Combine address
+    $address = $municipality . ', ' . $city . ', ' . $barangay;
+
+    if (!empty($new_password)) {
+        // Validate the new password and confirm password
+        if ($new_password !== $confirm_password) {
+            echo "<script>alert('New password and confirm password do not match.');</script>";
+        } else {
+            // Fetch the current hashed password from the database
+            $stmt = $con->prepare("SELECT password FROM patreg WHERE email = ?");
+            $stmt->bind_param("s", $_SESSION['email']);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+            $stored_password = $row['password'];
+
+            // Verify current password
+            if (!password_verify($current_password, $stored_password)) {
+                echo "<script>alert('Current password is incorrect.');</script>";
+            } else {
+                // Hash new password
+                $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+
+                // Update patient info in database
+                $stmt = $con->prepare("UPDATE patreg SET fname = ?, lname = ?, age = ?, contact = ?, address = ?, password = ? WHERE email = ?");
+                $stmt->bind_param("sssssss", $first_name, $last_name, $age, $contact_no, $address, $hashed_password, $_SESSION['email']);
+                $stmt->execute();
+                echo "<script>alert('Patient information updated successfully.');</script>";
+            }
+        }
+    } else {
+        // Update patient info without changing the password
+        $stmt = $con->prepare("UPDATE patreg SET fname = ?, lname = ?, age = ?, contact = ?, address = ? WHERE email = ?");
+        $stmt->bind_param("ssssss", $first_name, $last_name, $age, $contact_no, $address, $_SESSION['email']);
+        $stmt->execute();
+        echo "<script>alert('Patient information updated successfully.');</script>";
+    }
+}
 
 ?>
 
@@ -131,15 +268,15 @@ function get_specs()
             document.getElementById('messageModal').classList.remove('hidden');
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const closeMessageModal = document.getElementById('closeMessageModal');
             const closeModalButton = document.getElementById('closeModalButton');
 
-            closeMessageModal.addEventListener('click', function () {
+            closeMessageModal.addEventListener('click', function() {
                 document.getElementById('messageModal').classList.add('hidden');
             });
 
-            closeModalButton.addEventListener('click', function () {
+            closeModalButton.addEventListener('click', function() {
                 document.getElementById('messageModal').classList.add('hidden');
             });
         });
@@ -535,9 +672,9 @@ function get_specs()
             return `${hour}:${minutes} ${period}`;
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Event listener for selecting a doctor
-            document.getElementById('select-doctor-btn').addEventListener('click', function () {
+            document.getElementById('select-doctor-btn').addEventListener('click', function() {
                 const selectedDoctor = document.getElementById('doctor').value;
                 const selectedDate = document.getElementById('appdate').value;
                 if (selectedDoctor) {
@@ -611,13 +748,13 @@ function get_specs()
             // ... (rest of the code)
 
             // Set the min attribute for the appointment date to disable past dates
-            document.addEventListener("DOMContentLoaded", function () {
+            document.addEventListener("DOMContentLoaded", function() {
                 const dateInput = document.getElementById("appdate");
                 const today = new Date().toISOString().split("T")[0]; // Get today's date in YYYY-MM-DD format
                 dateInput.setAttribute("min", today); // Set the min attribute to today's date
             });
 
-            document.getElementById('appdate').addEventListener('change', function () {
+            document.getElementById('appdate').addEventListener('change', function() {
                 const selectedDoctor = document.getElementById('doctor').value;
                 const selectedDate = this.value;
 
@@ -697,11 +834,11 @@ function get_specs()
                 });
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Close the modal when the close button is clicked
             const closeModalButton = document.getElementById('closeModal');
             if (closeModalButton) {
-                closeModalButton.addEventListener('click', function () {
+                closeModalButton.addEventListener('click', function() {
                     document.getElementById('queueModal').classList.add('hidden');
                 });
             }
@@ -709,7 +846,7 @@ function get_specs()
             // Close the modal when the bottom close button is clicked
             const closeModalBottomButton = document.getElementById('closeModalBottom');
             if (closeModalBottomButton) {
-                closeModalBottomButton.addEventListener('click', function () {
+                closeModalBottomButton.addEventListener('click', function() {
                     document.getElementById('queueModal').classList.add('hidden');
                 });
             }
@@ -717,13 +854,13 @@ function get_specs()
             // Print the modal content when the print button is clicked
             const printButton = document.getElementById('printButton');
             if (printButton) {
-                printButton.addEventListener('click', function () {
+                printButton.addEventListener('click', function() {
                     window.print();
                 });
             }
 
             // Optional: Close the modal if the user clicks outside of it
-            window.addEventListener('click', function (event) {
+            window.addEventListener('click', function(event) {
                 const modal = document.getElementById('queueModal');
                 if (event.target === modal) {
                     modal.classList.add('hidden');
@@ -756,38 +893,47 @@ function get_specs()
             <button onclick="showDiv('prescriptions')" class="block py-2 px-4 rounded hover:bg-blue-700">
                 <i class="fas fa-file-prescription"></i> Prescriptions
             </button>
+            <button onclick="showDiv('profile')" class="block py-2 px-4 rounded hover:bg-blue-700">
+                <i class="fas fa-user"></i> Profile
+            </button>
         </nav>
-
-
 
         <!-- Main Content -->
         <main class="flex-1 overflow-y-auto p-6">
             <h3 class="text-2xl font-bold mb-4">Welcome, <?php echo htmlspecialchars($username); ?>!</h3>
 
-            <!-- Dashboard -->
             <section id="dashboard" class="mb-8 section">
                 <h4 class="text-xl font-semibold mb-4">Dashboard</h4>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <!-- Book My Appointment Card -->
                     <div class="card text-center">
                         <span class="text-3xl text-blue-500"><i class="fa fa-calendar"></i></span>
                         <h5 class="mt-4">Book My Appointment</h5>
                         <p><button onclick="showDiv('book-appointment')" class="btn-blue">Book Appointment</button></p>
                     </div>
+
+                    <!-- My Appointments Card -->
                     <div class="card text-center">
                         <span class="text-3xl text-blue-500"><i class="fa fa-history"></i></span>
                         <h5 class="mt-4">My Appointments</h5>
-                        <p><button onclick="showDiv('appointment-history')" class="btn-blue">View Appointment
-                                History</button></p>
+                        <p><button onclick="showDiv('appointment-history')" class="btn-blue">View Appointment History</button></p>
                     </div>
+
+                    <!-- Prescriptions Card -->
                     <div class="card text-center">
                         <span class="text-3xl text-blue-500"><i class="fa fa-file-text"></i></span>
                         <h5 class="mt-4">Prescriptions</h5>
-                        <p><button onclick="showDiv('prescriptions')" class="btn-blue">View Prescription List</button>
-                        </p>
+                        <p><button onclick="showDiv('prescriptions')" class="btn-blue">View Prescription List</button></p>
+                    </div>
+
+                    <!-- Profile Card -->
+                    <div class="card text-center">
+                        <span class="text-3xl text-blue-500"><i class="fa fa-user"></i></span>
+                        <h5 class="mt-4">My Profile</h5>
+                        <p><button onclick="showDiv('profile')" class="btn-blue">View Profile</button></p>
                     </div>
                 </div>
             </section>
-
 
             <!-- Book Appointment -->
             <section id="book-appointment" class="mb-8 section hidden">
@@ -836,9 +982,9 @@ function get_specs()
             <section id="appointment-history" class="section hidden mt-8">
                 <h4 class="text-xl font-semibold mb-4">Appointment History</h4>
 
-                <!-- Search Bar -->
+                <!-- Search and Filter -->
                 <div class="flex mb-4">
-                    <form method="GET" class="flex space-x-4">
+                    <form method="GET" class="flex space-x-4" onsubmit="showDiv('appointment-history');">
                         <!-- Search Input -->
                         <div class="flex items-center">
                             <input type="text" name="search" placeholder="Search Doctor, Appointment Date, or Status"
@@ -846,11 +992,21 @@ function get_specs()
                                 value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" />
                         </div>
 
+                        <!-- Status Filter Dropdown -->
+                        <div class="flex items-center">
+                            <select name="status" class="form-select px-4 py-2 border rounded-md">
+                                <option value="">All</option>
+                                <option value="pending" <?php echo isset($_GET['status']) && $_GET['status'] == 'pending' ? 'selected' : ''; ?>>Pending</option>
+                                <option value="confirmed" <?php echo isset($_GET['status']) && $_GET['status'] == 'confirmed' ? 'selected' : ''; ?>>Confirmed</option>
+                                <option value="cancelled" <?php echo isset($_GET['status']) && $_GET['status'] == 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
+                            </select>
+                        </div>
+
                         <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md">Search</button>
                     </form>
                 </div>
 
-                <!-- Responsive Table Container -->
+                <!-- Appointment History Table -->
                 <div class="overflow-x-auto bg-white shadow-md rounded-lg">
                     <table class="table-auto w-full min-w-max divide-y divide-gray-200">
                         <thead class="bg-gray-100">
@@ -864,15 +1020,27 @@ function get_specs()
                         </thead>
                         <tbody class="divide-y divide-gray-200">
                             <?php
-                            // Capture the search term
+                            // Capture search and status filter
                             $search = isset($_GET['search']) ? mysqli_real_escape_string($con, $_GET['search']) : '';
+                            $statusFilter = isset($_GET['status']) ? mysqli_real_escape_string($con, $_GET['status']) : '';
 
-                            // Query to fetch appointment history with search functionality
+                            // Query to fetch appointment history with search and status filter functionality
                             $query = "SELECT * FROM appointmenttb WHERE pid='$pid'";
 
-                            // Add search conditions
+                            // Add search condition
                             if ($search) {
                                 $query .= " AND (doctor LIKE '%$search%' OR appdate LIKE '%$search%' OR apptime LIKE '%$search%')";
+                            }
+
+                            // Add status filter condition
+                            if ($statusFilter) {
+                                if ($statusFilter == 'pending') {
+                                    $query .= " AND userStatus = '1' AND doctorStatus = '1'";
+                                } elseif ($statusFilter == 'confirmed') {
+                                    $query .= " AND userStatus = '2' AND doctorStatus = '2'";
+                                } elseif ($statusFilter == 'cancelled') {
+                                    $query .= " AND (userStatus = '0' OR doctorStatus = '0')";
+                                }
                             }
 
                             $query .= " ORDER BY appdate DESC, apptime DESC";
@@ -1006,6 +1174,78 @@ function get_specs()
                         </tbody>
                     </table>
                 </div>
+            </section>
+            <section id="profile" class="section hidden mt-8">
+                <form method="post" action="">
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- First Name -->
+                        <div>
+                            <label for="first_name" class="block text-sm font-medium text-gray-700">First Name</label>
+                            <input type="text" name="first_name" id="first_name" class="form-input mt-1 block w-full p-2 border rounded" placeholder="First Name" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" value="<?= $first_name ?? ''; ?>" required>
+                        </div>
+
+                        <!-- Last Name -->
+                        <div>
+                            <label for="last_name" class="block text-sm font-medium text-gray-700">Last Name</label>
+                            <input type="text" name="last_name" id="last_name" class="form-input mt-1 block w-full p-2 border rounded" placeholder="Last Name" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" value="<?= $last_name ?? ''; ?>" required>
+                        </div>
+
+                        <!-- Age -->
+                        <div>
+                            <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
+                            <input type="number" name="age" id="age" class="form-input mt-1 block w-full p-2 border rounded" placeholder="Age" min="0" value="<?= $age ?? ''; ?>" required>
+                        </div>
+
+                        <!-- Contact No. with +639 Prefix -->
+                        <div>
+                            <label for="contact_no" class="block text-sm font-medium text-gray-700">Contact No.</label>
+                            <div class="flex items-center mt-1">
+                                <!-- Display +639 prefix centered vertically -->
+                                <span class="text-gray-700 mr-2 flex items-center">(+639)</span> <!-- Center-align prefix -->
+                                <!-- Input field for phone number -->
+                                <input type="tel" id="contact_no" name="contact_no" class="form-input mt-1 block w-full p-2 border rounded-md" placeholder="Enter Contact No." required pattern="\d{9}" title="Enter a valid 9-digit phone number (without +639)" value="<?= substr($contact ?? '', 4); ?>" minlength="9" maxlength="9" />
+                            </div>
+                        </div>
+
+
+
+                        <!-- Address Fields -->
+                        <div>
+                            <label for="municipality" class="block text-sm font-medium text-gray-700">Municipality</label>
+                            <input type="text" name="municipality" id="municipality" class="form-input mt-1 block w-full p-2 border rounded" placeholder="Municipality" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" value="<?= $municipality ?? ''; ?>" required>
+                        </div>
+
+                        <div>
+                            <label for="city" class="block text-sm font-medium text-gray-700">City</label>
+                            <input type="text" name="city" id="city" class="form-input mt-1 block w-full p-2 border rounded" placeholder="City" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" value="<?= $city ?? ''; ?>" required>
+                        </div>
+
+                        <div>
+                            <label for="barangay" class="block text-sm font-medium text-gray-700">Barangay</label>
+                            <input type="text" name="barangay" id="barangay" class="form-input mt-1 block w-full p-2 border rounded" placeholder="Barangay" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" value="<?= $barangay ?? ''; ?>" required>
+                        </div>
+
+                        <!-- Current Password -->
+                        <div>
+                            <label for="current_password" class="block text-sm font-medium text-gray-700">Current Password</label>
+                            <input type="password" name="current_password" id="current_password" class="form-input mt-1 block w-full p-2 border rounded" placeholder="Current Password">
+                        </div>
+
+                        <!-- New Password -->
+                        <div>
+                            <label for="new_password" class="block text-sm font-medium text-gray-700">New Password</label>
+                            <input type="password" name="new_password" id="new_password" class="form-input mt-1 block w-full p-2 border rounded" placeholder="New Password">
+                        </div>
+
+                        <!-- Confirm Password -->
+                        <div>
+                            <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm Password</label>
+                            <input type="password" name="confirm_password" id="confirm_password" class="form-input mt-1 block w-full p-2 border rounded" placeholder="Confirm Password">
+                        </div>
+                    </div>
+
+                    <button type="submit" name="update_info" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">Update Info</button>
+                </form>
             </section>
 
 

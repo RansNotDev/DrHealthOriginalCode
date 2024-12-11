@@ -1,41 +1,52 @@
 <?php
 if (session_status() == PHP_SESSION_NONE) {
-    session_start();
+  session_start();
 }
 $con = mysqli_connect("localhost", "root", "", "myhmsdb");
 
 if (isset($_POST['docsub1'])) {
-    $demail = $_POST['email3'];
-    $dpass = $_POST['password3'];
+  $demail = $_POST['email3'];
+  $dpass = $_POST['password3'];
 
-    // Query to check if the doctor exists using email and retrieve their status
-    $query = "SELECT * FROM doctb WHERE email = ? AND password = ?";
-    $stmt = $con->prepare($query);
-    $stmt->bind_param("ss", $demail, $dpass);
-    $stmt->execute();
-    $result = $stmt->get_result();
+  // Query to check if the doctor exists using email
+  $query = "SELECT * FROM doctb WHERE email = ?";
+  $stmt = $con->prepare($query);
+  $stmt->bind_param("s", $demail);
+  $stmt->execute();
+  $result = $stmt->get_result();
 
-    if ($result->num_rows == 1) {
-        $row = $result->fetch_assoc();
+  if ($result->num_rows == 1) {
+    $row = $result->fetch_assoc();
 
-        // Check if the doctor's status is 'archived'
-        if ($row['status'] == 'archived') {
-            echo "<script>
-                    alert('Your account is archived. Please contact your administrator.');
+    // Verify the password using password_verify()
+    if (password_verify($dpass, $row['password'])) {
+      // Check if the doctor's status is 'archived'
+      if ($row['status'] == 'archived') {
+        echo "<script>
+                        alert('Your account is archived. Please contact your administrator.');
+                        window.location.href = 'doctor.php';
+                      </script>";
+      } else {
+        // If status is active, allow login
+        $_SESSION['dname'] = $row['username'];
+        header("Location: doctor-panel.php");
+      }
+    } else {
+      // Invalid password
+      echo "<script>
+                    alert('Invalid Email or Password. Try Again!');
                     window.location.href = 'doctor.php';
                   </script>";
-        } else {
-            // If status is active, allow login
-            $_SESSION['dname'] = $row['username']; // You can also store the doctor's email if needed
-            header("Location: doctor-panel.php");
-        }
-    } else {
-        echo "<script>
+    }
+  } else {
+    // No matching email found
+    echo "<script>
                 alert('Invalid Email or Password. Try Again!');
                 window.location.href = 'doctor.php';
               </script>";
-    }
+  }
 }
+
 
 
 // if(isset($_POST['update_data']))  
@@ -47,21 +58,20 @@ if (isset($_POST['docsub1'])) {
 //   }
 //   else
 //     header("Location:error2.php");
-  
+
 
 
 
 function display_docs()
 {
-	global $con;
-	$query="select * from doctb";
-	$result=mysqli_query($con,$query);
-	while($row=mysqli_fetch_array($result))
-	{
-		$name=$row['name'];
-		# echo'<option value="" disabled selected>Select Doctor</option>';
-		echo '<option value="'.$name.'">'.$name.'</option>';
-	}
+  global $con;
+  $query = "select * from doctb";
+  $result = mysqli_query($con, $query);
+  while ($row = mysqli_fetch_array($result)) {
+    $name = $row['name'];
+    # echo'<option value="" disabled selected>Select Doctor</option>';
+    echo '<option value="' . $name . '">' . $name . '</option>';
+  }
 }
 
 // if(isset($_POST['doc_sub']))
@@ -74,8 +84,9 @@ function display_docs()
 // }
 
 
-function display_admin_panel(){
-	echo '<!DOCTYPE html>
+function display_admin_panel()
+{
+  echo '<!DOCTYPE html>
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -230,4 +241,3 @@ function display_admin_panel(){
   </body>
 </html>';
 }
-?>

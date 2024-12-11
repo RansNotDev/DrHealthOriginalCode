@@ -25,11 +25,11 @@
                 <i class="fas fa-bars w-6 h-6"></i>
             </button>
             <div class="hidden lg:flex items-center space-x-4">
-    <a href="javascript:void(0);" onclick="confirmLogout()" class="text-white hover:text-gray-200 flex items-center">
-        <i class="fas fa-sign-out-alt w-5 h-5 mr-1"></i>
-        Logout
-    </a>
-</div>
+                <a href="javascript:void(0);" onclick="confirmLogout()" class="text-white hover:text-gray-200 flex items-center">
+                    <i class="fas fa-sign-out-alt w-5 h-5 mr-1"></i>
+                    Logout
+                </a>
+            </div>
         </div>
         <div class="lg:hidden bg-blue-800 fixed inset-0 z-50 hidden" id="navbar-menu">
             <div class="absolute top-4 right-4 text-white text-2xl cursor-pointer" onclick="closeMenu()">
@@ -71,11 +71,11 @@
                 </li>
                 <!-- Logout Button -->
                 <li class="py-2">
-    <a href="javascript:void(0);" onclick="confirmLogout(); closeMenu();" class="text-white hover:text-gray-200 flex items-center">
-        <i class="fas fa-sign-out-alt w-5 h-5 mr-2"></i>
-        Logout
-    </a>
-</li>
+                    <a href="javascript:void(0);" onclick="confirmLogout(); closeMenu();" class="text-white hover:text-gray-200 flex items-center">
+                        <i class="fas fa-sign-out-alt w-5 h-5 mr-2"></i>
+                        Logout
+                    </a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -95,19 +95,20 @@
 
         // Confirm logout with a popup and redirect to the login page if confirmed
         function confirmLogout() {
-        if (confirm("Are you sure you want to log out?")) {
-            // Redirect to the login page after confirmation
-            window.location.href = "index.php"; // Replace with your login page URL
-        }
-    }
+            if (confirm("Are you sure you want to log out?")) {
+                // Perform an AJAX request or redirect to a PHP logout page
+                window.location.href = "logout.php"; // Redirect to the logout PHP script
+            }
 
-    // Close the menu (if you're using a mobile menu or side navigation)
-    function closeMenu() {
-        const menu = document.getElementById('navbar-menu');
-        if (menu) {
-            menu.classList.add('hidden'); // Hide the menu when logout is clicked
         }
-    }
+
+        // Close the menu (if you're using a mobile menu or side navigation)
+        function closeMenu() {
+            const menu = document.getElementById('navbar-menu');
+            if (menu) {
+                menu.classList.add('hidden'); // Hide the menu when logout is clicked
+            }
+        }
 
         // Show the correct content in the dashboard
         function showDiv(divId) {

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,27 +19,31 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
         }
+
         .form-control {
             border-radius: 0.75rem;
         }
+
         .login-container {
             max-width: 400px;
             margin: 10% auto;
             background-color: rgba(255, 255, 255, 0.9);
             padding: 30px;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
             position: relative;
             overflow: hidden;
             background-image: url('images/bck1.png');
             background-size: cover;
             background-position: center;
         }
+
         .register-heading {
             text-align: center;
             margin-bottom: 20px;
             font-weight: 600;
         }
+
         .btnRegister {
             margin-top: 20px;
             width: 100%;
@@ -50,17 +55,21 @@
             cursor: pointer;
             transition: background 0.3s ease;
         }
+
         .btnRegister:hover {
             background: #0056b3;
         }
+
         .error-message {
             color: red;
             text-align: center;
             margin-bottom: 10px;
         }
+
         .password-toggle {
             position: relative;
         }
+
         .password-toggle .toggle-password {
             position: absolute;
             top: 50%;
@@ -72,33 +81,33 @@
             background: none;
             padding: 0;
         }
+
         .form-group i {
             margin-right: 8px;
             color: #0062cc;
         }
+
         .form-control:focus {
             border-color: #0062cc;
             box-shadow: none;
         }
-        .form-group input {
-            transition: all 0.3s ease;
-        }
-        .form-group input:hover {
-            border-color: #0056b3;
-        }
+
         .footer {
             text-align: center;
             margin-top: 20px;
         }
+
         .footer a {
             color: #0062cc;
             text-decoration: none;
         }
+
         .footer a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
+
 <body>
     <div class="container login-container">
         <div class="register-right">
@@ -156,4 +165,5 @@
         }
     </script>
 </body>
+
 </html>
