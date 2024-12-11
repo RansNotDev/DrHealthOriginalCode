@@ -1,4 +1,5 @@
 <?php
+
 include('db.php');
 include('func.php');
 include('newfunc.php');

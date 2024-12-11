@@ -390,11 +390,11 @@
                     <form id="registration-form" method="POST" action="func2.php">
                         <div class="form-group">
                             <label for="fname"><i class="fa fa-user"></i> First Name</label>
-                            <input type="text" class="form-control" placeholder="First Name" id="fname" name="fname" required />
+                            <input type="text" class="form-control" placeholder="First Name" id="fname" name="fname" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" required />
                         </div>
                         <div class="form-group">
                             <label for="lname"><i class="fa fa-user"></i> Last Name</label>
-                            <input type="text" class="form-control" placeholder="Last Name" id="lname" name="lname" required />
+                            <input type="text" class="form-control" placeholder="Last Name" id="lname" name="lname" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" required />
                         </div>
                         <div class="form-group">
                             <label for="age"><i class="fa fa-calendar-alt"></i> Age</label>
