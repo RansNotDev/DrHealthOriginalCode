@@ -1,19 +1,38 @@
 <?php
 if (session_status() == PHP_SESSION_NONE) {
-    session_start();
+  session_start(); // Start session if not already started
 }
-$con=mysqli_connect("localhost","root","","myhmsdb");
-if(isset($_POST['patsub'])){
-	$email=$_POST['email'];
-	$password=$_POST['password2'];
-	$query="select * from patreg where email='$email' and password='$password';";
-	$result=mysqli_query($con,$query);
-	if(mysqli_num_rows($result)==1)
-	{
-		while($row=mysqli_fetch_array($result,MYSQLI_ASSOC)){
+
+$con = mysqli_connect("localhost", "root", "", "myhmsdb");
+
+if (isset($_POST['patsub'])) {
+  // Retrieve the user input
+  $email = $_POST['email'];
+  $password = $_POST['password2']; // The password entered by the user
+
+  // Debugging: Check if email and password are received correctly
+  echo "<script>alert('Email: " . $email . " Password: " . $password . "');</script>";
+
+  // Prepare the SQL query to fetch user data based on the email
+  $query = "SELECT * FROM patreg WHERE email = ?";
+  $stmt = $con->prepare($query);
+  $stmt->bind_param("s", $email);
+  $stmt->execute();
+  $result = $stmt->get_result();
+
+  // Check if a matching user was found
+  if ($result->num_rows == 1) {
+    $row = $result->fetch_assoc();
+
+    // Debugging: Show the stored password hash
+    // echo "<script>alert('Stored password hash: " . $row['password'] . "');</script>";
+
+    // Verify the password using password_verify
+    if (password_verify($password, $row['password'])) {
+      // Password is correct, set session variables
       $_SESSION['pid'] = $row['pid'];
-      $_SESSION['username'] = $row['fname']." ".$row['lname'];
-      $_SESSION['username1']= $row['email'];
+      $_SESSION['username'] = $row['fname'] . " " . $row['lname'];
+      $_SESSION['username1'] = $row['email'];
       $_SESSION['fname'] = $row['fname'];
       $_SESSION['lname'] = $row['lname'];
       $_SESSION['age'] = $row['age'];
@@ -21,24 +40,29 @@ if(isset($_POST['patsub'])){
       $_SESSION['contact'] = $row['contact'];
       $_SESSION['address'] = $row['address'];
       $_SESSION['email'] = $row['email'];
+
+      // Debugging: Successful login message
+      echo "<script>alert('Login successful! Redirecting to the patient panel...');</script>";
+
+      // Redirect to the patient panel
+      header("Location: patient-panel.php");
+      exit(); // Ensure the script stops after the redirect
+    } else {
+      // Password is incorrect
+      echo "<script>alert('Password is incorrect.'); window.location.href = 'index.php';</script>";
     }
-		header("Location:patient-panel.php");
-	}
-  else {
-    echo("<script>alert('Invalid Username or Password. Try Again!');
-          window.location.href = 'index.php';</script>");
-    header("Location:error.php");
+  } else {
+    // No user found with the provided email
+    echo "<script>alert('No user found with this email.'); window.location.href = 'index.php';</script>";
   }
-		
 }
-if(isset($_POST['update_data']))
-{
-	$contact=$_POST['contact'];
-	$status=$_POST['status'];
-	$query="update appointmenttb set payment='$status' where contact='$contact';";
-	$result=mysqli_query($con,$query);
-	if($result)
-		header("Location:updated.php");
+if (isset($_POST['update_data'])) {
+  $contact = $_POST['contact'];
+  $status = $_POST['status'];
+  $query = "update appointmenttb set payment='$status' where contact='$contact';";
+  $result = mysqli_query($con, $query);
+  if ($result)
+    header("Location:updated.php");
 }
 
 
@@ -57,18 +81,31 @@ if(isset($_POST['update_data']))
 // 	}
 // }
 
-if(isset($_POST['doc_sub']))
-{
-	$doctor=$_POST['doctor'];
-  $dpassword=$_POST['dpassword'];
-  $demail=$_POST['demail'];
-	$query="insert into doctb(username,password,email,docFees)values('$doctor','$dpassword','$demail')";
-	$result=mysqli_query($con,$query);
-	if($result)
-		header("Location:adddoc.php");
+if (isset($_POST['doc_sub'])) {
+  $doctor = $_POST['doctor'];
+  $dpassword = $_POST['dpassword'];  // Password entered by user
+  $demail = $_POST['demail'];
+
+  // Hash the password using password_hash before storing it in the database
+  $hashed_password = password_hash($dpassword, PASSWORD_DEFAULT);
+
+  // Prepare the SQL query to insert data into the database
+  $query = "INSERT INTO doctb(username, password, email, docFees) VALUES ('$doctor', '$hashed_password', '$demail')";
+
+  // Execute the query
+  $result = mysqli_query($con, $query);
+
+  // Check if the query was successful
+  if ($result) {
+    header("Location:adddoc.php");
+  } else {
+    echo "Error: " . mysqli_error($con);
+  }
 }
-function display_admin_panel(){
-	echo '<!DOCTYPE html>
+
+function display_admin_panel()
+{
+  echo '<!DOCTYPE html>
 <html lang="en">
   <head>
     <!-- Required meta tags -->
@@ -224,4 +261,3 @@ function display_admin_panel(){
   </body>
 </html>';
 }
-?>

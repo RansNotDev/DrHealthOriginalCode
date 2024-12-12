@@ -1,3 +1,81 @@
+<?php
+session_start();  // Start the session to check login status
+
+// Check if the admin is logged in by verifying the session variable
+if (!isset($_SESSION['username'])) {
+  // Redirect to the login page if the admin is not logged in
+  header("Location: admin.php");
+  exit();  // Ensure the script stops executing after redirection
+}
+
+$con = mysqli_connect("localhost", "root", "", "myhmsdb");
+
+include('newfunc.php');
+include('navbaradmin.php');
+
+if (isset($_POST['docsub'])) {
+  // Get data from form
+  $first_name = $_POST['dfname'];
+  $middle_name = $_POST['dmname'];
+  $last_name = $_POST['dlname'];
+  $age = $_POST['dage'];
+  $contact_number = $_POST['dcontact'];
+  $gender = $_POST['dgender'];
+  $email = $_POST['demail'];
+  $password = $_POST['dpassword'];
+  $specialization = $_POST['special'];
+
+  // Combine first, middle, and last name for the username
+  $username = "Dr. " . $first_name . ' ' . $middle_name . ' ' . $last_name;
+
+  // Hash the password before storing it
+  $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+  // Prepare SQL query to insert data into doctb table
+  $query = "INSERT INTO doctb (username, password, email, spec, status, first_name, middle_name, last_name, age, contact_number, gender) 
+              VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?)";
+  $stmt = $con->prepare($query);
+
+  if ($stmt === false) {
+    die('Prepare failed: ' . htmlspecialchars($con->error));
+  }
+
+  // Bind parameters and execute the query with the hashed password
+  $stmt->bind_param("ssssssssss", $username, $hashed_password, $email, $specialization, $first_name, $middle_name, $last_name, $age, $contact_number, $gender);
+
+  if ($stmt->execute()) {
+    echo "<script>
+                alert('Doctor added successfully!');
+                window.location.href = 'admin-panel1.php';
+              </script>";
+    exit();
+  } else {
+    echo 'Execute failed: ' . htmlspecialchars($stmt->error);
+  }
+}
+
+if (isset($_POST['change_status'])) {
+  $demail = $_POST['demail'];
+  $newStatus = $_POST['new_status'];
+
+  $query = "UPDATE doctb SET status = ? WHERE email = ?";
+  $stmt = $con->prepare($query);
+  $stmt->bind_param("ss", $newStatus, $demail);
+  $stmt->execute();
+
+  if ($stmt) {
+    echo "<script>
+                alert('Doctor status updated successfully!');
+                window.location.hash = 'list-doc';
+              </script>";
+  } else {
+    echo "<script>
+                alert('Unable to update doctor status. Please try again.');
+                window.location.hash = 'list-doc';
+              </script>";
+  }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -62,7 +140,7 @@
     }
 
     // On page load, check if a hash is present in the URL and show the correct section
-    window.onload = function () {
+    window.onload = function() {
       handleHashChange();
     };
 
@@ -224,6 +302,13 @@
       /* Slightly darker gray on hover */
     }
 
+    nav a {
+      color: var(--white);
+      /* Set the text color to white */
+      text-decoration: none;
+      /* Remove underline from links */
+    }
+
     /* Links Styling */
     a {
       color: var(--dark-gray);
@@ -239,73 +324,6 @@
 </head>
 
 <body class="bg-gray-100">
-
-  <?php
-  $con = mysqli_connect("localhost", "root", "", "myhmsdb");
-
-  include('newfunc.php');
-  include('navbaradmin.php');
-
-  if (isset($_POST['docsub'])) {
-    // Get data from form
-    $first_name = $_POST['dfname'];
-    $middle_name = $_POST['dmname'];
-    $last_name = $_POST['dlname'];
-    $age = $_POST['dage'];
-    $contact_number = $_POST['dcontact'];
-    $gender = $_POST['dgender'];
-    $email = $_POST['demail'];
-    $password = $_POST['dpassword']; // This is auto-generated
-    $specialization = $_POST['special'];
-
-    // Combine first, middle, and last name for the username
-    $username = "Dr. " . $first_name . ' ' . $middle_name . ' ' . $last_name;
-
-    // Prepare SQL query to insert data into doctb table
-    $query = "INSERT INTO doctb (username, password, email, spec, status, first_name, middle_name, last_name, age, contact_number, gender) 
-              VALUES (?, ?, ?, ?, 'active', ?, ?, ?, ?, ?, ?)";
-    $stmt = $con->prepare($query);
-
-    if ($stmt === false) {
-      die('Prepare failed: ' . htmlspecialchars($con->error));
-    }
-
-    // Bind parameters and execute the query
-    $stmt->bind_param("ssssssssss", $username, $password, $email, $specialization, $first_name, $middle_name, $last_name, $age, $contact_number, $gender);
-
-    if ($stmt->execute()) {
-      echo "<script>
-                alert('Doctor added successfully!');
-                window.location.href = 'admin-panel1.php';
-              </script>";
-      exit();
-    } else {
-      echo 'Execute failed: ' . htmlspecialchars($stmt->error);
-    }
-  }
-
-  if (isset($_POST['change_status'])) {
-    $demail = $_POST['demail'];
-    $newStatus = $_POST['new_status'];
-
-    $query = "UPDATE doctb SET status = ? WHERE email = ?";
-    $stmt = $con->prepare($query);
-    $stmt->bind_param("ss", $newStatus, $demail);
-    $stmt->execute();
-
-    if ($stmt) {
-      echo "<script>
-                alert('Doctor status updated successfully!');
-                window.location.hash = 'list-doc';
-              </script>";
-    } else {
-      echo "<script>
-                alert('Unable to update doctor status. Please try again.');
-                window.location.hash = 'list-doc';
-              </script>";
-    }
-  }
-  ?>
 
   <div class="flex h-screen space-x-6 p-4">
     <!-- Sidebar -->
@@ -438,23 +456,32 @@
             <!-- First Name -->
             <div class="mb-4">
               <label for="dfname" class="block text-gray-700">First Name:</label>
-              <input type="text" name="dfname" class="form-input mt-1 block w-full" pattern="[A-Za-z\s]+"
-                title="Only letters and spaces are allowed" required>
+              <input type="text" name="dfname" id="dfname" class="form-input mt-1 block w-full" pattern="[A-Za-z\s]+"
+                title="Only letters and spaces are allowed" required oninput="validateName('dfname')">
             </div>
 
             <!-- Last Name -->
             <div class="mb-4">
               <label for="dlname" class="block text-gray-700">Last Name:</label>
-              <input type="text" name="dlname" class="form-input mt-1 block w-full" pattern="[A-Za-z\s]+"
-                title="Only letters and spaces are allowed" required>
+              <input type="text" name="dlname" id="dlname" class="form-input mt-1 block w-full" pattern="[A-Za-z\s]+"
+                title="Only letters and spaces are allowed" required oninput="validateName('dlname')">
             </div>
 
             <!-- Middle Name -->
             <div class="mb-4">
               <label for="dmname" class="block text-gray-700">Middle Name:</label>
-              <input type="text" name="dmname" class="form-input mt-1 block w-full" pattern="[A-Za-z\s]+"
-                title="Only letters and spaces are allowed">
+              <input type="text" name="dmname" id="dmname" class="form-input mt-1 block w-full" pattern="[A-Za-z\s]{1,2}"
+                title="Only letters and spaces are allowed, and the name must be 1 or 2 characters long"
+                maxlength="2" oninput="validateName('dmname')">
             </div>
+
+            <script>
+              // Function to validate name fields and restrict special characters
+              function validateName(inputId) {
+                const input = document.getElementById(inputId);
+                input.value = input.value.replace(/[^A-Za-z\s]/g, ''); // Remove any character that is not a letter or space
+              }
+            </script>
 
             <!-- Age -->
             <div class="mb-4">
@@ -464,23 +491,22 @@
 
             <!-- Contact Number -->
             <div class="mb-4">
-    <label for="dcontact" class="block text-gray-700">Contact Number:</label>
-    <div class="flex items-center">
-        <span class="text-gray-700 mr-2">(+639)</span>
-        <input 
-            type="tel" 
-            name="dcontact" 
-            id="dcontact"
-            class="form-input mt-1 block w-full" 
-            pattern="[0-9]{9}" 
-            maxlength="9" 
-            placeholder="Enter 9 digits" 
-            required 
-            title="Only numeric values are allowed, 9 digits after the country code."
-            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-        >
-    </div>
-</div>
+              <label for="dcontact" class="block text-gray-700">Contact Number:</label>
+              <div class="flex items-center">
+                <span class="text-gray-700 mr-2">(+639)</span>
+                <input
+                  type="tel"
+                  name="dcontact"
+                  id="dcontact"
+                  class="form-input mt-1 block w-full"
+                  pattern="[0-9]{9}"
+                  maxlength="9"
+                  placeholder="Enter 9 digits"
+                  required
+                  title="Only numeric values are allowed, 9 digits after the country code."
+                  oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+              </div>
+            </div>
 
             <!-- Gender -->
             <div class="mb-4">
@@ -1089,7 +1115,7 @@
     }
 
     // On page load, check if a hash is present in the URL and show the correct section
-    window.onload = function () {
+    window.onload = function() {
       handleHashChange();
     };
 
@@ -1099,7 +1125,7 @@
 
 
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
       // Automatically generate a random password and fill the password field
       function generateRandomPassword(length) {
         const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";

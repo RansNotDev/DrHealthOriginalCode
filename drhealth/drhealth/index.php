@@ -388,13 +388,18 @@
                 <div class="register-content">
                     <h3 class="form-heading text-center">Register</h3>
                     <form id="registration-form" method="POST" action="func2.php">
+                        <!-- First Name field with restricted characters -->
                         <div class="form-group">
                             <label for="fname"><i class="fa fa-user"></i> First Name</label>
-                            <input type="text" class="form-control" placeholder="First Name" id="fname" name="fname" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" required />
+                            <input type="text" class="form-control" placeholder="First Name" id="fname" name="fname"
+                                pattern="^[A-Za-z\s]*$" title="Only letters and spaces are allowed." required />
                         </div>
+
+                        <!-- Last Name field with restricted characters -->
                         <div class="form-group">
                             <label for="lname"><i class="fa fa-user"></i> Last Name</label>
-                            <input type="text" class="form-control" placeholder="Last Name" id="lname" name="lname" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" required />
+                            <input type="text" class="form-control" placeholder="Last Name" id="lname" name="lname"
+                                pattern="^[A-Za-z\s]*$" title="Only letters and spaces are allowed." required />
                         </div>
                         <div class="form-group">
                             <label for="age"><i class="fa fa-calendar-alt"></i> Age</label>
@@ -403,17 +408,25 @@
 
                         <!-- Address Fields in One Row -->
                         <div class="form-row">
+                            <!-- City field with restricted characters -->
                             <div class="form-group col-12 col-md-4">
                                 <label for="city"><i class="fa fa-map-marker-alt"></i> City</label>
-                                <input type="text" class="form-control" placeholder="City" id="city" name="city" required />
+                                <input type="text" class="form-control" placeholder="City" id="city" name="city"
+                                    pattern="^[A-Za-z\s]*$" title="City can only contain letters and spaces." required />
                             </div>
+
+                            <!-- Municipality field with restricted characters -->
                             <div class="form-group col-12 col-md-4">
                                 <label for="municipality"><i class="fa fa-map-marker-alt"></i> Municipality</label>
-                                <input type="text" class="form-control" placeholder="Municipality" id="municipality" name="municipality" required />
+                                <input type="text" class="form-control" placeholder="Municipality" id="municipality" name="municipality"
+                                    pattern="^[A-Za-z\s]*$" title="Municipality can only contain letters and spaces." required />
                             </div>
+
+                            <!-- Barangay field with restricted characters -->
                             <div class="form-group col-12 col-md-4">
                                 <label for="barangay"><i class="fa fa-map-marker-alt"></i> Barangay</label>
-                                <input type="text" class="form-control" placeholder="Barangay" id="barangay" name="barangay" required />
+                                <input type="text" class="form-control" placeholder="Barangay" id="barangay" name="barangay"
+                                    pattern="^[A-Za-z\s]*$" title="Barangay can only contain letters and spaces." required />
                             </div>
                         </div>
 
@@ -431,7 +444,13 @@
 
                         <div class="form-group">
                             <label for="contact"><i class="fa fa-phone"></i> Contact No.</label>
-                            <input type="tel" minlength="11" maxlength="11" id="contact" name="contact" class="form-control" placeholder="Contact No." required />
+                            <!-- Input for contact number -->
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">+639</span> <!-- Display +63 prefix -->
+                                </div>
+                                <input type="tel" id="contact" name="contact" class="form-control" placeholder="Enter Contact No." required minlength="9" maxlength="9" />
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="register-email"><i class="fa fa-envelope"></i> Email</label>
@@ -496,6 +515,20 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all the fields with restricted characters
+            const restrictedFields = ['#city', '#municipality', '#barangay', '#fname', '#lname'];
+
+            restrictedFields.forEach(fieldId => {
+                const inputField = document.querySelector(fieldId);
+
+                // Add real-time input validation
+                inputField.addEventListener('input', function(event) {
+                    // Replace anything other than letters and spaces with an empty string
+                    this.value = this.value.replace(/[^A-Za-z\s]/g, '');
+                });
+            });
+        });
         $(document).ready(function() {
             $(".toggle-password").click(function() {
                 var target = $(this).data("target");

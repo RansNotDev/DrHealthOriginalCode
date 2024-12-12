@@ -1,15 +1,18 @@
 <?php
 session_start();
-require 'vendor/autoload.php'; // Include the Composer autoload file for PHPMailer
-include('func1.php');
-include('navbardoc.php');
 
 // Check if the doctor name session variable is set
 if (!isset($_SESSION['dname'])) {
   // Redirect to login page or show an error message
-  header("Location: login.php");
+  header("Location: doctor.php");
   exit();
 }
+
+require 'vendor/autoload.php'; // Include the Composer autoload file for PHPMailer
+include('func1.php');
+include('navbardoc.php');
+
+
 
 $con = new mysqli("localhost", "root", "", "myhmsdb");
 $doctor = $_SESSION['dname'];
@@ -216,29 +219,34 @@ function get_doctor_info($con)
 $doctor_info = get_doctor_info($con);
 function update_doctor_info($con, $first_name, $middle_name, $last_name, $age, $contact_no, $new_password = null)
 {
-  // Get the logged-in doctor username from the session
-  $doctor = $_SESSION['dname'];
+    // Get the logged-in doctor username from the session
+    $doctor = $_SESSION['dname'];
 
-  // Combine first, middle, and last names to create a new username
-  $new_username = "Dr. " . $first_name . " " . $middle_name . " " . $last_name;
+    // Combine first, middle, and last names to create a new username
+    $new_username = "Dr. " . $first_name . " " . $middle_name . " " . $last_name;
 
-  if (!empty($new_password)) {
-    // If a new password is provided, update it along with other details
-    $query = "UPDATE doctb SET first_name = ?, middle_name = ?, last_name = ?, age = ?, contact_number = ?, password = ?, username = ? WHERE username = ?";
-    $stmt = $con->prepare($query);
-    $stmt->bind_param("ssssssss", $first_name, $middle_name, $last_name, $age, $contact_no, $new_password, $new_username, $doctor);
-  } else {
-    // If no new password is provided, exclude the password field
-    $query = "UPDATE doctb SET first_name = ?, middle_name = ?, last_name = ?, age = ?, contact_number = ?, username = ? WHERE username = ?";
-    $stmt = $con->prepare($query);
-    $stmt->bind_param("sssssss", $first_name, $middle_name, $last_name, $age, $contact_no, $new_username, $doctor);
-  }
+    if (!empty($new_password)) {
+        // If a new password is provided, update it along with other details
+        $query = "UPDATE doctb SET first_name = ?, middle_name = ?, last_name = ?, age = ?, contact_number = ?, password = ?, username = ? WHERE username = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("ssssssss", $first_name, $middle_name, $last_name, $age, $contact_no, $new_password, $new_username, $doctor);
+    } else {
+        // If no new password is provided, exclude the password field
+        $query = "UPDATE doctb SET first_name = ?, middle_name = ?, last_name = ?, age = ?, contact_number = ?, username = ? WHERE username = ?";
+        $stmt = $con->prepare($query);
+        $stmt->bind_param("sssssss", $first_name, $middle_name, $last_name, $age, $contact_no, $new_username, $doctor);
+    }
 
-  $stmt->execute();
-
-  // Update session with the new username
-  $_SESSION['dname'] = $new_username;
+    // Execute the query
+    if ($stmt->execute()) {
+        // If the update is successful, update the session with the new username
+        $_SESSION['dname'] = $new_username;
+    } else {
+        // Handle failure (optional, depending on how you want to handle errors)
+        echo "Error updating doctor info: " . $stmt->error;
+    }
 }
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
   // Collect the form data
@@ -257,7 +265,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
     if ($new_password !== $confirm_password) {
       echo "<script>alert('New password and confirm password do not match.');</script>";
     } else {
-      // Fetch the current password from the database
+      // Fetch the current hashed password from the database
       $stmt = $con->prepare("SELECT password FROM doctb WHERE username = ?");
       $stmt->bind_param("s", $_SESSION['dname']);
       $stmt->execute();
@@ -265,10 +273,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
       $row = $result->fetch_assoc();
       $stored_password = $row['password'];
 
-      // Check if the current password matches
-      if ($current_password !== $stored_password) {
+      // Verify the current password with the stored hashed password
+      if (!password_verify($current_password, $stored_password)) {
         echo "<script>alert('Current password is incorrect.');</script>";
       } else {
+        // Hash the new password before storing it
+        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+
         // Update doctor information, including the new password
         update_doctor_info(
           $con,
@@ -277,7 +288,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
           $last_name,
           $age,
           $contact_no,
-          $new_password
+          $hashed_password // Pass the hashed password to the function
         );
         echo "<script>alert('Doctor information updated successfully.');</script>";
       }
@@ -295,6 +306,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
     echo "<script>alert('Doctor information updated successfully.');</script>";
   }
 }
+
 
 // Get the logged-in doctor's name
 $dname = $_SESSION['dname'];
@@ -962,61 +974,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search_submit'])) {
             callback(data);
           });
       }
+
       function renderCalendar(date, availability) {
-    const year = date.getFullYear();
-    const month = date.getMonth();
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    const firstDayOfMonth = new Date(year, month, 1).getDay();
-    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const firstDayOfMonth = new Date(year, month, 1).getDay();
+        const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-    const today = new Date(); // Current date
-    const currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // Normalize current date
+        const today = new Date(); // Current date
+        const currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate()); // Normalize current date
 
-    calendarEl.innerHTML = '';
-    currentMonthEl.textContent = `${monthNames[month]} ${year}`;
+        calendarEl.innerHTML = '';
+        currentMonthEl.textContent = `${monthNames[month]} ${year}`;
 
-    dayNames.forEach(day => {
-        const dayEl = document.createElement('div');
-        dayEl.className = 'font-bold text-center';
-        dayEl.textContent = day;
-        calendarEl.appendChild(dayEl);
-    });
+        dayNames.forEach(day => {
+          const dayEl = document.createElement('div');
+          dayEl.className = 'font-bold text-center';
+          dayEl.textContent = day;
+          calendarEl.appendChild(dayEl);
+        });
 
-    for (let i = 0; i < firstDayOfMonth; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.className = 'bg-gray-200';
-        calendarEl.appendChild(emptyCell);
-    }
-
-    for (let day = 1; day <= daysInMonth; day++) {
-        const dateValue = new Date(year, month, day); // Construct the date object for the current day
-        const formattedDateValue = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        const dayEl = document.createElement('div');
-        dayEl.className = 'bg-white p-2 rounded shadow text-center'; // Adjusted padding
-        
-        const label = document.createElement('label');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.name = 'available_dates[]';
-        checkbox.value = formattedDateValue;
-
-        if (availability.includes(formattedDateValue)) {
-            checkbox.checked = true;
+        for (let i = 0; i < firstDayOfMonth; i++) {
+          const emptyCell = document.createElement('div');
+          emptyCell.className = 'bg-gray-200';
+          calendarEl.appendChild(emptyCell);
         }
 
-        // Disable checkbox for past dates
-        if (dateValue < currentDate) {
+        for (let day = 1; day <= daysInMonth; day++) {
+          const dateValue = new Date(year, month, day); // Construct the date object for the current day
+          const formattedDateValue = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+          const dayEl = document.createElement('div');
+          dayEl.className = 'bg-white p-2 rounded shadow text-center'; // Adjusted padding
+
+          const label = document.createElement('label');
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.name = 'available_dates[]';
+          checkbox.value = formattedDateValue;
+
+          if (availability.includes(formattedDateValue)) {
+            checkbox.checked = true;
+          }
+
+          // Disable checkbox for past dates
+          if (dateValue < currentDate) {
             checkbox.disabled = true;
             dayEl.classList.add('opacity-50'); // Optional: Style past dates differently
-        }
+          }
 
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(` ${day}`));
-        dayEl.appendChild(label);
-        calendarEl.appendChild(dayEl);
-    }
-}
+          label.appendChild(checkbox);
+          label.appendChild(document.createTextNode(` ${day}`));
+          dayEl.appendChild(label);
+          calendarEl.appendChild(dayEl);
+        }
+      }
 
 
       prevMonthBtn.addEventListener('click', () => {

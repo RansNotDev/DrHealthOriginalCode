@@ -86,7 +86,7 @@ ob_start(); // Starts output buffering
         // Confirm logout
         function confirmLogout() {
             if (confirm("Are you sure you want to log out?")) {
-                window.location.href = "login.php"; // Replace with your login page URL
+                window.location.href = "logout2.php"; // Replace with your login page URL
             }
         }
 
