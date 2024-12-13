@@ -17,11 +17,11 @@ if (isset($_POST['patsub1'])) {
     $contact = '+639' . $contact;
   }
 
-  // Combine City, Municipality, and Barangay into one address
+  // Combine City, province, and Barangay into one address
   $city = $_SESSION['city'];
-  $municipality = $_SESSION['municipality'];
+  $province = $_SESSION['province'];
   $barangay = $_SESSION['barangay'];
-  $address = $barangay . ", " . $municipality . ", " . $city;
+  $address = $barangay . ", " . $province . ", " . $city;
 
   // Get password from session and hash it
   $password = $_SESSION['password'];

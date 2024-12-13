@@ -133,9 +133,9 @@ function get_patient_info($con)
     if ($result->num_rows > 0) {
         $patient_info = $result->fetch_assoc();
 
-        // Split the address into municipality, city, barangay
+        // Split the address into province, city, barangay
         $address_parts = explode(',', $patient_info['address']);
-        $patient_info['municipality'] = trim($address_parts[0] ?? '');
+        $patient_info['province'] = trim($address_parts[0] ?? '');
         $patient_info['city'] = trim($address_parts[1] ?? '');
         $patient_info['barangay'] = trim($address_parts[2] ?? '');
 
@@ -154,7 +154,7 @@ if ($patient_info) {
     $last_name = htmlspecialchars($patient_info['lname']);
     $age = htmlspecialchars($patient_info['age']);
     $contact = htmlspecialchars($patient_info['contact']);
-    $municipality = htmlspecialchars($patient_info['municipality']);
+    $province = htmlspecialchars($patient_info['province']);
     $city = htmlspecialchars($patient_info['city']);
     $barangay = htmlspecialchars($patient_info['barangay']);
 } else {
@@ -198,7 +198,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
     $last_name = $_POST['last_name'];
     $age = $_POST['age'];
     $contact_no = "+639" . $_POST['contact_no'];  // Prepend +639 to the contact number
-    $municipality = $_POST['municipality'];
+    $province = $_POST['province'];
     $city = $_POST['city'];
     $barangay = $_POST['barangay'];
     $current_password = $_POST['current_password'];
@@ -206,12 +206,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
     $confirm_password = $_POST['confirm_password'];
 
     // Combine address
-    $address = $municipality . ', ' . $city . ', ' . $barangay;
+    $address = $province . ', ' . $city . ', ' . $barangay;
 
     if (!empty($new_password)) {
         // Validate the new password and confirm password
         if ($new_password !== $confirm_password) {
-            echo "<script>alert('New password and confirm password do not match.');</script>";
+            $_SESSION['alert_message'] = "New password and confirm password do not match.";
         } else {
             // Fetch the current hashed password from the database
             $stmt = $con->prepare("SELECT password FROM patreg WHERE email = ?");
@@ -223,7 +223,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
 
             // Verify current password
             if (!password_verify($current_password, $stored_password)) {
-                echo "<script>alert('Current password is incorrect.');</script>";
+                $_SESSION['alert_message'] = "Current password is incorrect.";
             } else {
                 // Hash new password
                 $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
@@ -232,7 +232,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
                 $stmt = $con->prepare("UPDATE patreg SET fname = ?, lname = ?, age = ?, contact = ?, address = ?, password = ? WHERE email = ?");
                 $stmt->bind_param("sssssss", $first_name, $last_name, $age, $contact_no, $address, $hashed_password, $_SESSION['email']);
                 $stmt->execute();
-                echo "<script>alert('Patient information updated successfully.');</script>";
+                $_SESSION['alert_message'] = "Patient information updated successfully.";
             }
         }
     } else {
@@ -240,8 +240,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
         $stmt = $con->prepare("UPDATE patreg SET fname = ?, lname = ?, age = ?, contact = ?, address = ? WHERE email = ?");
         $stmt->bind_param("ssssss", $first_name, $last_name, $age, $contact_no, $address, $_SESSION['email']);
         $stmt->execute();
-        echo "<script>alert('Patient information updated successfully.');</script>";
+        $_SESSION['alert_message'] = "Patient information updated successfully.";
     }
+
+    // Redirect to the same page to show the alert message
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit();
 }
 
 ?>
@@ -1175,6 +1179,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
                     </table>
                 </div>
             </section>
+            <?php
+            if (isset($_SESSION['alert_message'])) {
+                // Output the alert message in JavaScript
+                echo "<script>alert('" . $_SESSION['alert_message'] . "');</script>";
+
+                // Optionally, clear the alert message after it's shown to prevent it from showing again
+                unset($_SESSION['alert_message']);
+            }
+            ?>
+
             <section id="profile" class="section hidden mt-8">
                 <form method="post" action="">
                     <div class="grid grid-cols-2 gap-4">
@@ -1207,12 +1221,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_info'])) {
                             </div>
                         </div>
 
-
-
                         <!-- Address Fields -->
                         <div>
-                            <label for="municipality" class="block text-sm font-medium text-gray-700">Municipality</label>
-                            <input type="text" name="municipality" id="municipality" class="form-input mt-1 block w-full p-2 border rounded" placeholder="Municipality" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" value="<?= $municipality ?? ''; ?>" required>
+                            <label for="province" class="block text-sm font-medium text-gray-700">Province</label>
+                            <input type="text" name="province" id="province" class="form-input mt-1 block w-full p-2 border rounded" placeholder="Province" pattern="[A-Za-z\s]+" title="Only letters and spaces are allowed" value="<?= $province ?? ''; ?>" required>
                         </div>
 
                         <div>

@@ -203,7 +203,7 @@
             var age = document.getElementById('age').value;
 
             var city = document.getElementById('city').value;
-            var municipality = document.getElementById('municipality').value;
+            var province = document.getElementById('province').value;
             var barangay = document.getElementById('barangay').value;
 
             var gender = document.querySelector('input[name="gender"]:checked').value;
@@ -227,7 +227,7 @@
                     lname: lname,
                     age: age,
                     barangay: barangay,
-                    municipality: municipality,
+                    province: province,
                     city: city,
                     gender: gender,
                     email: email,
@@ -408,18 +408,18 @@
 
                         <!-- Address Fields in One Row -->
                         <div class="form-row">
+                            <!-- province field with restricted characters -->
+                            <div class="form-group col-12 col-md-4">
+                                <label for="province"><i class="fa fa-map-marker-alt"></i> Province</label>
+                                <input type="text" class="form-control" placeholder="Province" id="province" name="province"
+                                    pattern="^[A-Za-z\s]*$" title="province can only contain letters and spaces." required />
+                            </div>
+
                             <!-- City field with restricted characters -->
                             <div class="form-group col-12 col-md-4">
                                 <label for="city"><i class="fa fa-map-marker-alt"></i> City</label>
                                 <input type="text" class="form-control" placeholder="City" id="city" name="city"
                                     pattern="^[A-Za-z\s]*$" title="City can only contain letters and spaces." required />
-                            </div>
-
-                            <!-- Municipality field with restricted characters -->
-                            <div class="form-group col-12 col-md-4">
-                                <label for="municipality"><i class="fa fa-map-marker-alt"></i> Municipality</label>
-                                <input type="text" class="form-control" placeholder="Municipality" id="municipality" name="municipality"
-                                    pattern="^[A-Za-z\s]*$" title="Municipality can only contain letters and spaces." required />
                             </div>
 
                             <!-- Barangay field with restricted characters -->
@@ -517,7 +517,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Get all the fields with restricted characters
-            const restrictedFields = ['#city', '#municipality', '#barangay', '#fname', '#lname'];
+            const restrictedFields = ['#city', '#province', '#barangay', '#fname', '#lname'];
 
             restrictedFields.forEach(fieldId => {
                 const inputField = document.querySelector(fieldId);

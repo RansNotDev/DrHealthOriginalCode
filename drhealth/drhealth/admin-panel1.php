@@ -606,9 +606,9 @@ if (isset($_POST['change_status'])) {
               // Build the query with search and status filter conditions
               $query = "SELECT * FROM doctb WHERE 1";
 
-              // Add search condition
+              // Add search condition (exact match)
               if ($search) {
-                $query .= " AND (username LIKE '%$search%' OR id LIKE '%$search%')";
+                $query .= " AND (username = '$search' OR id = '$search' OR spec = '$search')";
               }
 
               // Add status filter condition
@@ -619,41 +619,54 @@ if (isset($_POST['change_status'])) {
               // Execute the query
               $result = mysqli_query($con, $query);
 
-              // Loop through and display the results
-              while ($row = mysqli_fetch_array($result)) {
-                $id = isset($row['id']) ? $row['id'] : '';
-                $username = isset($row['username']) ? $row['username'] : '';
-                $spec = isset($row['spec']) ? $row['spec'] : '';
-                $email = isset($row['email']) ? $row['email'] : '';
-                $status = isset($row['status']) ? $row['status'] : '';
+              // Check for query execution success
+              if (!$result) {
+                echo "<tr><td colspan='6' class='text-center py-4'>Error: " . mysqli_error($con) . "</td></tr>";
+                exit;
+              }
 
-                // Determine button label and new status for action
-                if ($status == 'archived') {
-                  $buttonLabel = "Unarchive";
-                  $newStatus = 'active';
-                } else {
-                  $buttonLabel = "Archive";
-                  $newStatus = 'archived';
+              // Check if rows exist
+              if (mysqli_num_rows($result) > 0) {
+                // Loop through and display the results
+                while ($row = mysqli_fetch_array($result)) {
+                  $id = isset($row['id']) ? $row['id'] : '';
+                  $username = isset($row['username']) ? $row['username'] : '';
+                  $spec = isset($row['spec']) ? $row['spec'] : '';
+                  $email = isset($row['email']) ? $row['email'] : '';
+                  $status = isset($row['status']) ? $row['status'] : '';
+
+                  // Determine button label and new status for action
+                  if ($status === 'archived') {
+                    $buttonLabel = "Unarchive";
+                    $newStatus = 'active';
+                  } else {
+                    $buttonLabel = "Archive";
+                    $newStatus = 'archived';
+                  }
+
+                  // Display the row
+                  echo "<tr class='border-b'>
+              <td class='border px-4 py-2'>$id</td>
+              <td class='border px-4 py-2'>$username</td>
+              <td class='border px-4 py-2'>$spec</td>
+              <td class='border px-4 py-2'>$email</td>
+              <td class='border px-4 py-2'>$status</td>
+              <td class='border px-4 py-2'>
+                <form action='admin-panel1.php' method='POST'>
+                  <input type='hidden' name='demail' value='$email'>
+                  <input type='hidden' name='new_status' value='$newStatus'>
+                  <button type='submit' name='change_status' class='bg-blue-600 text-white px-4 py-2 rounded'>$buttonLabel</button>
+                </form>
+              </td>
+            </tr>";
                 }
-
-                // Display the row
-                echo "<tr class='border-b'>
-            <td class='border px-4 py-2'>$id</td>
-            <td class='border px-4 py-2'>$username</td>
-            <td class='border px-4 py-2'>$spec</td>
-            <td class='border px-4 py-2'>$email</td>
-            <td class='border px-4 py-2'>$status</td>
-            <td class='border px-4 py-2'>
-              <form action='admin-panel1.php' method='POST'>
-                <input type='hidden' name='demail' value='$email'>
-                <input type='hidden' name='new_status' value='$newStatus'>
-                <button type='submit' name='change_status' class='bg-blue-600 text-white px-4 py-2 rounded'>$buttonLabel</button>
-              </form>
-            </td>
-          </tr>";
+              } else {
+                // If no results are found
+                echo "<tr><td colspan='6' class='text-center py-4'>No records found</td></tr>";
               }
               ?>
             </tbody>
+
           </table>
         </div>
       </section>
@@ -696,41 +709,54 @@ if (isset($_POST['change_status'])) {
               // Capture the search term
               $search = isset($_GET['search']) ? mysqli_real_escape_string($con, $_GET['search']) : '';
 
-              // Modify the query to include search functionality
+              // Base query for fetching patient data
               $query = "SELECT * FROM appointmenttb WHERE doctorStatus = 2";
 
-              // Add search condition if a search term is provided
+              // Add search condition if a search term is provided (exact match)
               if ($search) {
-                $query .= " AND (pid LIKE '%$search%' OR fname LIKE '%$search%' OR lname LIKE '%$search%' OR doctor LIKE '%$search%')";
+                $query .= " AND (pid = '$search' OR fname = '$search' OR lname = '$search' OR doctor = '$search')";
               }
 
               // Execute the query
               $result = mysqli_query($con, $query);
 
-              // Loop through and display the results
-              while ($row = mysqli_fetch_array($result)) {
-                $pid = isset($row['pid']) ? $row['pid'] : '';
-                $fname = isset($row['fname']) ? $row['fname'] : '';
-                $lname = isset($row['lname']) ? $row['lname'] : '';
-                $gender = isset($row['gender']) ? $row['gender'] : '';
-                $email = isset($row['email']) ? $row['email'] : '';
-                $contact = isset($row['contact']) ? $row['contact'] : '';
-                $doctor = isset($row['doctor']) ? $row['doctor'] : '';
-                $appdate = isset($row['appdate']) ? $row['appdate'] : '';
+              // Check for query execution success
+              if (!$result) {
+                echo "<tr><td colspan='8' class='text-center py-4'>Error: " . mysqli_error($con) . "</td></tr>";
+                exit;
+              }
 
-                echo "<tr class='border-b'>
-            <td class='border px-4 py-2'>$pid</td>
-            <td class='border px-4 py-2'>$fname</td>
-            <td class='border px-4 py-2'>$lname</td>
-            <td class='border px-4 py-2'>$gender</td>
-            <td class='border px-4 py-2'>$email</td>
-            <td class='border px-4 py-2'>$contact</td>
-            <td class='border px-4 py-2'>$doctor</td>
-            <td class='border px-4 py-2'>$appdate</td>
-          </tr>";
+              // Check if rows exist
+              if (mysqli_num_rows($result) > 0) {
+                // Loop through and display the results
+                while ($row = mysqli_fetch_array($result)) {
+                  $pid = isset($row['pid']) ? $row['pid'] : '';
+                  $fname = isset($row['fname']) ? $row['fname'] : '';
+                  $lname = isset($row['lname']) ? $row['lname'] : '';
+                  $gender = isset($row['gender']) ? $row['gender'] : '';
+                  $email = isset($row['email']) ? $row['email'] : '';
+                  $contact = isset($row['contact']) ? $row['contact'] : '';
+                  $doctor = isset($row['doctor']) ? $row['doctor'] : '';
+                  $appdate = isset($row['appdate']) ? $row['appdate'] : '';
+
+                  echo "<tr class='border-b'>
+              <td class='border px-4 py-2'>$pid</td>
+              <td class='border px-4 py-2'>$fname</td>
+              <td class='border px-4 py-2'>$lname</td>
+              <td class='border px-4 py-2'>$gender</td>
+              <td class='border px-4 py-2'>$email</td>
+              <td class='border px-4 py-2'>$contact</td>
+              <td class='border px-4 py-2'>$doctor</td>
+              <td class='border px-4 py-2'>$appdate</td>
+            </tr>";
+                }
+              } else {
+                // If no results are found
+                echo "<tr><td colspan='8' class='text-center py-4'>No records found</td></tr>";
               }
               ?>
             </tbody>
+
           </table>
         </div>
       </section>
@@ -847,13 +873,13 @@ if (isset($_POST['change_status'])) {
 
               // Base query
               $query = "SELECT p.pid, p.fname, p.lname, p.age, p.gender, p.email, p.contact, p.address, a.userStatus, a.doctorStatus 
-                          FROM patreg p 
-                          LEFT JOIN appointmenttb a ON p.pid = a.pid";
+            FROM patreg p 
+            LEFT JOIN appointmenttb a ON p.pid = a.pid";
 
               // Add search and filter conditions
               $conditions = [];
               if (!empty($search)) {
-                $conditions[] = "(p.fname LIKE '%$search%' OR p.lname LIKE '%$search%' OR p.email LIKE '%$search%' OR p.contact LIKE '%$search%')";
+                $conditions[] = "(p.pid = '$search' OR p.fname = '$search' OR p.lname = '$search' OR p.email = '$search')";
               }
 
               if (!empty($statusFilter)) {
@@ -876,41 +902,54 @@ if (isset($_POST['change_status'])) {
               // Execute query
               $result = mysqli_query($con, $query);
 
-              // Render rows
-              while ($row = mysqli_fetch_assoc($result)) {
-                $pid = isset($row['pid']) ? $row['pid'] : '';
-                $fname = isset($row['fname']) ? $row['fname'] : '';
-                $lname = isset($row['lname']) ? $row['lname'] : '';
-                $age = isset($row['age']) ? $row['age'] : '';
-                $gender = isset($row['gender']) ? $row['gender'] : '';
-                $email = isset($row['email']) ? $row['email'] : '';
-                $contact = isset($row['contact']) ? $row['contact'] : '';
-                $address = isset($row['address']) ? $row['address'] : '';
-                $userStatus = isset($row['userStatus']) ? $row['userStatus'] : '';
-                $doctorStatus = isset($row['doctorStatus']) ? $row['doctorStatus'] : '';
+              // Check for query execution success
+              if (!$result) {
+                echo "<tr><td colspan='9' class='text-center py-4'>Error: " . mysqli_error($con) . "</td></tr>";
+                exit;
+              }
 
-                $status = '';
-                if (($userStatus == 1) && ($doctorStatus == 1)) {
-                  $status = "<strong>Pending</strong>";
-                } elseif (($userStatus == 0) && ($doctorStatus == 1)) {
-                  $status = "<strong>Cancelled by Patient</strong>";
-                } elseif (($userStatus == 1) && ($doctorStatus == 0)) {
-                  $status = "<strong>Cancelled by Doctor</strong>";
-                } elseif (($userStatus == 2) && ($doctorStatus == 2)) {
-                  $status = "<strong>Confirmed</strong>";
+              // Check if rows exist
+              if (mysqli_num_rows($result) > 0) {
+                // Loop through and display the results
+                while ($row = mysqli_fetch_assoc($result)) {
+                  $pid = isset($row['pid']) ? $row['pid'] : '';
+                  $fname = isset($row['fname']) ? $row['fname'] : '';
+                  $lname = isset($row['lname']) ? $row['lname'] : '';
+                  $age = isset($row['age']) ? $row['age'] : '';
+                  $gender = isset($row['gender']) ? $row['gender'] : '';
+                  $email = isset($row['email']) ? $row['email'] : '';
+                  $contact = isset($row['contact']) ? $row['contact'] : '';
+                  $address = isset($row['address']) ? $row['address'] : '';
+                  $userStatus = isset($row['userStatus']) ? $row['userStatus'] : '';
+                  $doctorStatus = isset($row['doctorStatus']) ? $row['doctorStatus'] : '';
+
+                  // Determine appointment status
+                  $status = '';
+                  if (($userStatus == 1) && ($doctorStatus == 1)) {
+                    $status = "<strong>Pending</strong>";
+                  } elseif (($userStatus == 0) && ($doctorStatus == 1)) {
+                    $status = "<strong>Cancelled by Patient</strong>";
+                  } elseif (($userStatus == 1) && ($doctorStatus == 0)) {
+                    $status = "<strong>Cancelled by Doctor</strong>";
+                  } elseif (($userStatus == 2) && ($doctorStatus == 2)) {
+                    $status = "<strong>Confirmed</strong>";
+                  }
+
+                  echo "<tr class='border-b'>
+              <td class='border px-4 py-2'>$pid</td>
+              <td class='border px-4 py-2'>$fname</td>
+              <td class='border px-4 py-2'>$lname</td>
+              <td class='border px-4 py-2'>$age</td>
+              <td class='border px-4 py-2'>$gender</td>
+              <td class='border px-4 py-2'>$email</td>
+              <td class='border px-4 py-2'>$contact</td>
+              <td class='border px-4 py-2'>$address</td>
+              <td class='border px-4 py-2'>$status</td>
+            </tr>";
                 }
-
-                echo "<tr class='border-b'>
-                        <td class='border px-4 py-2'>$pid</td>
-                        <td class='border px-4 py-2'>$fname</td>
-                        <td class='border px-4 py-2'>$lname</td>
-                        <td class='border px-4 py-2'>$age</td>
-                        <td class='border px-4 py-2'>$gender</td>
-                        <td class='border px-4 py-2'>$email</td>
-                        <td class='border px-4 py-2'>$contact</td>
-                        <td class='border px-4 py-2'>$address</td>
-                        <td class='border px-4 py-2'>$status</td>
-                    </tr>";
+              } else {
+                // If no results are found
+                echo "<tr><td colspan='9' class='text-center py-4'>No records found</td></tr>";
               }
               ?>
             </tbody>

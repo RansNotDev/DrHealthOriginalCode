@@ -10,9 +10,6 @@ if (isset($_POST['patsub'])) {
   $email = $_POST['email'];
   $password = $_POST['password2']; // The password entered by the user
 
-  // Debugging: Check if email and password are received correctly
-  echo "<script>alert('Email: " . $email . " Password: " . $password . "');</script>";
-
   // Prepare the SQL query to fetch user data based on the email
   $query = "SELECT * FROM patreg WHERE email = ?";
   $stmt = $con->prepare($query);
